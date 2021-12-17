@@ -203,7 +203,7 @@ viewOptions options =
     case options of
         [] ->
             [ div [ Attrs.class "px-3 py-3 text-gray-600" ]
-                [ text "Cannot find 'sta roba" ]
+                [ text "Cannot find data" ]
             ]
 
         _ ->
