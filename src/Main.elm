@@ -226,7 +226,7 @@ Autocomplete.view [ Autocomplete.placeholder "search something" ]
                       else
                         text "No items selected"
                     ]
-                , Autocomplete.view [ Autocomplete.placeholder "search something" ]
+                , Autocomplete.view [ Autocomplete.placeholder "enter \"item\"" ]
                     { model = model.autocompleteModel
                     , toMsg = AutocompleteMsg
                     , options = Just options
