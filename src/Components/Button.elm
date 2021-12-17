@@ -3,6 +3,7 @@ module Components.Button exposing
     , Size
     , asAnchor
     , asButton
+    , ghost
     , icon
     , lg
     , md
@@ -103,6 +104,7 @@ getConfig =
 type Variant
     = Primary
     | Outline
+    | Ghost
 
 
 view : Variant -> List (Attribute msg) -> String -> Html msg
@@ -115,7 +117,7 @@ view variant attrs label =
         (List.append
             config.attributes
             [ Attrs.class """
-            font-medium leading-none tracking-wider
+            leading-none tracking-wider
             rounded-full box-content
             disabled:opacity-80
             transition-color duration-200
@@ -124,10 +126,13 @@ view variant attrs label =
             , Attrs.class <|
                 case variant of
                     Primary ->
-                        "bg-teal-600 hover:bg-teal-700 text-white"
+                        "bg-teal-600 hover:bg-teal-700 text-white font-medium "
 
                     Outline ->
-                        "border-2 border-teal-400 hover:border-teal-600 text-teal-700"
+                        "border-2 border-teal-400 hover:border-teal-600 text-teal-700 font-medium "
+
+                    Ghost ->
+                        "text-teal-700 uppercase font-semibold tracking-wide"
             , Attrs.class <|
                 case config.size of
                     Lg ->
@@ -158,3 +163,8 @@ primary =
 outline : List (Attribute msg) -> String -> Html msg
 outline =
     view Outline
+
+
+ghost : List (Attribute msg) -> String -> Html msg
+ghost =
+    view Ghost
