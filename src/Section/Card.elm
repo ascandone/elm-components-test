@@ -12,9 +12,9 @@ src =
     "https://mui.com/static/images/cards/contemplative-reptile.jpg"
 
 
-get : (Never -> msg) -> Section msg
+get : Section msg
 get =
-    Section.make
+    Section.static
         { title = "Card"
         , example = """Card.raised [ Card.dataTestId "lizard-card" ]
     [ Card.media [] { src = "..." }
