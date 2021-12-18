@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "build": "parcel build index.html",
-    "dev": "parcel index.html"
+    "dev": "parcel index.html",
+    "test": "elm-test"
   },
   "devDependencies": {
     "@parcel/transformer-elm": "^2.0.1",
