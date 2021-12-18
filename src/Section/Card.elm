@@ -12,7 +12,7 @@ src =
     "https://mui.com/static/images/cards/contemplative-reptile.jpg"
 
 
-get : Section msg
+get : (Never -> msg) -> Section msg
 get =
     Section.make
         { title = "Card"
