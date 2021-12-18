@@ -1,6 +1,7 @@
 module Section exposing
     ( Section
     , make
+    , static
     , viewSections
     )
 
@@ -27,6 +28,16 @@ make { children, title, example } wrapMsg =
                 , codeExample example
                 , spacerContainer children
                 ]
+
+
+static :
+    { title : String
+    , example : String
+    , children : List (Html Never)
+    }
+    -> Section msg
+static args =
+    make args never
 
 
 sectionTitle : String -> Html msg
