@@ -1,4 +1,17 @@
-module Components.ActionButton exposing (Attribute, Size, class, filled, ghost, lg, md, onClick, size, sm)
+module Components.ActionButton exposing
+    ( Attribute
+    , Size
+    , class
+    , filled
+    , ghost
+    , lg
+    , md
+    , onClick
+    , size
+    , sm
+    , variant
+    , view
+    )
 
 import FeatherIcons
 import Html exposing (..)
@@ -11,6 +24,7 @@ type alias Config msg =
     { attributes : List (Html.Attribute msg)
     , classNames : List String
     , size : Size
+    , variant : Variant
     }
 
 
@@ -19,6 +33,7 @@ defaultConfig =
     { attributes = []
     , classNames = []
     , size = Md
+    , variant = Ghost
     }
 
 
@@ -80,11 +95,26 @@ type Variant
     | Filled
 
 
+variant : Variant -> Attribute msg
+variant value =
+    Attribute <| \c -> { c | variant = value }
+
+
+ghost : Variant
+ghost =
+    Ghost
+
+
+filled : Variant
+filled =
+    Filled
+
+
 getSize : Size -> Float
 getSize size_ =
     case size_ of
         Sm ->
-            16
+            18
 
         Md ->
             24
@@ -93,8 +123,8 @@ getSize size_ =
             32
 
 
-view : Variant -> List (Attribute msg) -> FeatherIcons.Icon -> Html msg
-view variant attrs icon =
+view : List (Attribute msg) -> FeatherIcons.Icon -> Html msg
+view attrs icon =
     let
         config =
             makeConfig attrs
@@ -114,7 +144,7 @@ view variant attrs icon =
                     Lg ->
                         "p-3"
             , A.class <|
-                case variant of
+                case config.variant of
                     Ghost ->
                         "hover:bg-slate-100 "
 
@@ -127,13 +157,3 @@ view variant attrs icon =
             |> FeatherIcons.withClass (String.join " " config.classNames)
             |> FeatherIcons.toHtml []
         ]
-
-
-ghost : List (Attribute msg) -> FeatherIcons.Icon -> Html msg
-ghost =
-    view Ghost
-
-
-filled : List (Attribute msg) -> FeatherIcons.Icon -> Html msg
-filled =
-    view Filled

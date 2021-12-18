@@ -1,5 +1,6 @@
 module Components.TextField exposing
     ( Attribute
+    , actionIcon
     , autofocus
     , disabled
     , icon
@@ -12,6 +13,7 @@ module Components.TextField exposing
     , view
     )
 
+import Components.ActionButton as ActionButton
 import FeatherIcons
 import Html exposing (..)
 import Html.Attributes as Attrs
@@ -100,6 +102,11 @@ icon icon_ =
             FeatherIcons.toHtml [] (FeatherIcons.withSize 20.0 icon_)
     in
     Attribute <| \c -> { c | icon = Just iconHtml }
+
+
+actionIcon : List (ActionButton.Attribute msg) -> FeatherIcons.Icon -> Attribute msg
+actionIcon attrs icon_ =
+    Attribute <| \c -> { c | icon = Just (ActionButton.view attrs icon_) }
 
 
 view : List (Attribute msg) -> Html msg

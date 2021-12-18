@@ -13,7 +13,9 @@ module Components.Autocomplete exposing
     , view
     )
 
+import Components.ActionButton as ActionButton
 import Components.TextField as TextField
+import FeatherIcons
 import Html exposing (..)
 import Html.Attributes as Attrs
 import Html.Events
@@ -107,21 +109,21 @@ type Msg
     | Focused
     | Blurred
     | Selected Option
+    | ClearedSelection
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Focused ->
-            ( { model
-                | focused = True
-                , selected = False
-                , value =
-                    if model.selected then
-                        init.value
+            ( { model | focused = True }
+            , Cmd.none
+            )
 
-                    else
-                        model.value
+        ClearedSelection ->
+            ( { model
+                | selected = False
+                , value = ""
               }
             , Cmd.none
             )
@@ -159,12 +161,24 @@ view attrs_ { model, toMsg, options } =
         div [ Attrs.class "w-64 relative" ]
             [ div [ Attrs.class "" ]
                 [ TextField.view
-                    (List.append
-                        config.textFieldAttributes
-                        [ TextField.onFocus Focused
-                        , TextField.onBlur Blurred
-                        , TextField.onInput InternalInput
-                        , TextField.value model.value
+                    (List.concat
+                        [ config.textFieldAttributes
+                        , if model.selected then
+                            [ TextField.actionIcon
+                                [ ActionButton.onClick ClearedSelection
+                                , ActionButton.size ActionButton.sm
+                                , ActionButton.variant ActionButton.filled
+                                ]
+                                FeatherIcons.x
+                            ]
+
+                          else
+                            []
+                        , [ TextField.onFocus Focused
+                          , TextField.onBlur Blurred
+                          , TextField.onInput InternalInput
+                          , TextField.value model.value
+                          ]
                         ]
                     )
                 ]

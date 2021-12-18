@@ -227,7 +227,7 @@ ActionButton.filled [ ActionButton.size ActionButton.sm ] Icon.cross
 
 ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
         , children =
-            [ ActionButton.ghost
+            [ ActionButton.view
                 [ ActionButton.class "transition-color duration-200 ease-in-out"
                 , ActionButton.class <|
                     if model.favorited then
@@ -239,7 +239,7 @@ ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
                 , ActionButton.size ActionButton.md
                 ]
                 FeatherIcons.heart
-            , ActionButton.ghost
+            , ActionButton.view
                 [ ActionButton.class "transition-all duration-200 ease-in-out"
                 , ActionButton.class <|
                     if model.collapsed then
@@ -250,11 +250,11 @@ ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
                 , ActionButton.onClick ToggleCollapsed
                 ]
                 FeatherIcons.chevronDown
-            , ActionButton.filled
+            , ActionButton.view
                 [ ActionButton.size ActionButton.sm
                 ]
                 FeatherIcons.x
-            , ActionButton.ghost
+            , ActionButton.view
                 [ ActionButton.size ActionButton.lg
                 ]
                 FeatherIcons.downloadCloud
@@ -344,6 +344,11 @@ textFields model =
                 [ TextField.value ""
                 , TextField.placeholder "example@gmail.com"
                 , TextField.icon FeatherIcons.user
+                ]
+            , TextField.view
+                [ TextField.value ""
+                , TextField.placeholder "example@gmail.com"
+                , TextField.actionIcon [ ActionButton.size ActionButton.sm ] FeatherIcons.x
                 ]
             ]
         }
