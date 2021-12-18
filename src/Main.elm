@@ -13,6 +13,16 @@ import Html exposing (..)
 import Html.Attributes exposing (class)
 
 
+main : Program () Model Msg
+main =
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = \_ -> Sub.none
+        }
+
+
 validateEmail : String -> Result String ( String, String )
 validateEmail mail =
     case String.split "@" mail of
@@ -184,12 +194,11 @@ src =
     "https://mui.com/static/images/cards/contemplative-reptile.jpg"
 
 
-view : Model -> Html Msg
-view model =
-    viewSections
-        [ viewSection
-            { title = "Icon button"
-            , example = """ActionButton.view
+actionBtn : Model -> Html Msg
+actionBtn model =
+    viewSection
+        { title = "Icon button"
+        , example = """ActionButton.view
     [ ActionButton.class "transition-color duration-200"
     , ActionButton.class <|
         if model.favorited then
@@ -212,34 +221,38 @@ ActionButton.view
     , ActionButton.onClick ToggleCollapsed
     ]
     FeatherIcons.chevronDown"""
-            , children =
-                [ ActionButton.view
-                    [ ActionButton.class "transition-color duration-200 ease-in-out"
-                    , ActionButton.class <|
-                        if model.favorited then
-                            "fill-red-400 text-red-400"
+        , children =
+            [ ActionButton.view
+                [ ActionButton.class "transition-color duration-200 ease-in-out"
+                , ActionButton.class <|
+                    if model.favorited then
+                        "fill-red-400 text-red-400"
 
-                        else
-                            ""
-                    , ActionButton.onClick ToggledFavorite
-                    ]
-                    FeatherIcons.heart
-                , ActionButton.view
-                    [ ActionButton.class "transition-all duration-200 ease-in-out"
-                    , ActionButton.class <|
-                        if model.collapsed then
-                            "rotate-180 text-gray-600"
-
-                        else
-                            "text-gray-900"
-                    , ActionButton.onClick ToggleCollapsed
-                    ]
-                    FeatherIcons.chevronDown
+                    else
+                        ""
+                , ActionButton.onClick ToggledFavorite
                 ]
-            }
-        , viewSection
-            { title = "Card"
-            , example = """Card.raised [ Card.dataTestId "lizard-card" ]
+                FeatherIcons.heart
+            , ActionButton.view
+                [ ActionButton.class "transition-all duration-200 ease-in-out"
+                , ActionButton.class <|
+                    if model.collapsed then
+                        "rotate-180 text-gray-600"
+
+                    else
+                        "text-gray-900"
+                , ActionButton.onClick ToggleCollapsed
+                ]
+                FeatherIcons.chevronDown
+            ]
+        }
+
+
+card : Html msg
+card =
+    viewSection
+        { title = "Card"
+        , example = """Card.raised [ Card.dataTestId "lizard-card" ]
     [ Card.media [] { src = "..." }
     , Card.body
         [ h1 [] [ text "Lizard" ]
@@ -259,26 +272,30 @@ ActionButton.view
         ]
     ]
             """
-            , children =
-                [ div [ class "max-w-sm" ]
-                    [ Card.raised [ Card.dataTestId "lizard-card" ]
-                        [ Card.media [] { src = src }
-                        , Card.body
-                            [ h2 [ class "font-semibold text-xl" ] [ text "Lizard" ]
-                            , p [ class "text-gray-600" ]
-                                [ text "Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica" ]
-                            ]
-                        , Card.actions
-                            [ Button.ghost [ Button.size Button.sm ] "Share"
-                            , Button.ghost [ Button.size Button.sm ] "Favorite"
-                            ]
+        , children =
+            [ div [ class "max-w-sm" ]
+                [ Card.raised [ Card.dataTestId "lizard-card" ]
+                    [ Card.media [] { src = src }
+                    , Card.body
+                        [ h2 [ class "font-semibold text-xl" ] [ text "Lizard" ]
+                        , p [ class "text-gray-600" ]
+                            [ text "Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica" ]
+                        ]
+                    , Card.actions
+                        [ Button.ghost [ Button.size Button.sm ] "Share"
+                        , Button.ghost [ Button.size Button.sm ] "Favorite"
                         ]
                     ]
                 ]
-            }
-        , viewSection
-            { title = "Text fields"
-            , example = """TextField.view
+            ]
+        }
+
+
+textFields : Model -> Html Msg
+textFields model =
+    viewSection
+        { title = "Text fields"
+        , example = """TextField.view
     [ TextField.value model.textField
     , TextField.onInput Input
     , TextField.validation (validateEmail model.textField)
@@ -287,38 +304,42 @@ ActionButton.view
     , TextField.icon Icons.user
     ]
 """
-            , children =
-                [ pre [ class "overflow-auto" ] [ text ("model.textField = " ++ model.textField) ]
-                , TextField.view
-                    [ TextField.value model.textField
-                    , TextField.onInput Input
-                    , TextField.validation (validateEmail model.textField)
-                    , TextField.placeholder "example@gmail.com"
-                    ]
-                , TextField.view
-                    [ TextField.value ""
-                    , TextField.placeholder "example@gmail.com"
-                    ]
-                , TextField.view
-                    [ TextField.value ""
-                    , TextField.validation (Err "Inserisci una mail valida")
-                    , TextField.placeholder "example@gmail.com"
-                    ]
-                , TextField.view
-                    [ TextField.value ""
-                    , TextField.placeholder "example@gmail.com"
-                    , TextField.disabled True
-                    ]
-                , TextField.view
-                    [ TextField.value ""
-                    , TextField.placeholder "example@gmail.com"
-                    , TextField.icon FeatherIcons.user
-                    ]
+        , children =
+            [ pre [ class "overflow-auto" ] [ text ("model.textField = " ++ model.textField) ]
+            , TextField.view
+                [ TextField.value model.textField
+                , TextField.onInput Input
+                , TextField.validation (validateEmail model.textField)
+                , TextField.placeholder "example@gmail.com"
                 ]
-            }
-        , viewSection
-            { title = "Autocomplete text fields"
-            , example = """Autocomplete.view [ Autocomplete.placeholder "search something" ]
+            , TextField.view
+                [ TextField.value ""
+                , TextField.placeholder "example@gmail.com"
+                ]
+            , TextField.view
+                [ TextField.value ""
+                , TextField.validation (Err "Inserisci una mail valida")
+                , TextField.placeholder "example@gmail.com"
+                ]
+            , TextField.view
+                [ TextField.value ""
+                , TextField.placeholder "example@gmail.com"
+                , TextField.disabled True
+                ]
+            , TextField.view
+                [ TextField.value ""
+                , TextField.placeholder "example@gmail.com"
+                , TextField.icon FeatherIcons.user
+                ]
+            ]
+        }
+
+
+autocomplete : Model -> Html Msg
+autocomplete model =
+    viewSection
+        { title = "Autocomplete text fields"
+        , example = """Autocomplete.view [ Autocomplete.placeholder "search something" ]
     { model = model.autocompleteModel
     , toMsg = AutocompleteMsg
     , options =
@@ -335,29 +356,33 @@ Autocomplete.view [ Autocomplete.placeholder "search something" ]
     , options = Nothing
     }
 """
-            , children =
-                [ pre [ class "overflow-auto" ]
-                    [ if model.autocompleteModel.selected then
-                        text ("id = " ++ model.autocompleteModel.value)
+        , children =
+            [ pre [ class "overflow-auto" ]
+                [ if model.autocompleteModel.selected then
+                    text ("id = " ++ model.autocompleteModel.value)
 
-                      else
-                        text "No items selected"
-                    ]
-                , Autocomplete.view [ Autocomplete.placeholder "enter \"item\"" ]
-                    { model = model.autocompleteModel
-                    , toMsg = AutocompleteMsg
-                    , options = Just options
-                    }
-                , Autocomplete.view [ Autocomplete.placeholder "search something" ]
-                    { model = model.autocompleteModel2
-                    , toMsg = AutocompleteMsg2
-                    , options = Nothing
-                    }
+                  else
+                    text "No items selected"
                 ]
-            }
-        , viewSection
-            { title = "Switch"
-            , example = """Switch.view
+            , Autocomplete.view [ Autocomplete.placeholder "enter \"item\"" ]
+                { model = model.autocompleteModel
+                , toMsg = AutocompleteMsg
+                , options = Just options
+                }
+            , Autocomplete.view [ Autocomplete.placeholder "search something" ]
+                { model = model.autocompleteModel2
+                , toMsg = AutocompleteMsg2
+                , options = Nothing
+                }
+            ]
+        }
+
+
+switch : Model -> Html Msg
+switch model =
+    viewSection
+        { title = "Switch"
+        , example = """Switch.view
     { selected = model.selectedValue
     , onSelected = Selected
     }
@@ -366,35 +391,39 @@ Autocomplete.view [ Autocomplete.placeholder "search something" ]
     , Switch.item Third "Third"
     ]
 """
-            , children =
-                [ let
-                    selectedValue =
-                        case model.selectedValue of
-                            0 ->
-                                "First"
+        , children =
+            [ let
+                selectedValue =
+                    case model.selectedValue of
+                        0 ->
+                            "First"
 
-                            1 ->
-                                "Second"
+                        1 ->
+                            "Second"
 
-                            2 ->
-                                "Third"
+                        2 ->
+                            "Third"
 
-                            _ ->
-                                "??"
-                  in
-                  pre [ class "overflow-auto" ]
-                    [ text ("selected = MyTab." ++ selectedValue)
-                    ]
-                , Switch.view { selected = model.selectedValue, onSelected = Selected }
-                    [ Switch.item 0 "First"
-                    , Switch.item 1 "Second"
-                    , Switch.item 2 "Third"
-                    ]
+                        _ ->
+                            "??"
+              in
+              pre [ class "overflow-auto" ]
+                [ text ("selected = MyTab." ++ selectedValue)
                 ]
-            }
-        , viewSection
-            { title = "Checkbox"
-            , example = """Toggle.view { checked = model.checked, onCheck = Checked }
+            , Switch.view { selected = model.selectedValue, onSelected = Selected }
+                [ Switch.item 0 "First"
+                , Switch.item 1 "Second"
+                , Switch.item 2 "Third"
+                ]
+            ]
+        }
+
+
+checkbox : Model -> Html Msg
+checkbox model =
+    viewSection
+        { title = "Checkbox"
+        , example = """Toggle.view { checked = model.checked, onCheck = Checked }
     [ Toggle.id "toggle-id" ]
 
 Toggle.view { checked = model.checked, onCheck = Checked }
@@ -407,38 +436,42 @@ Toggle.view { checked = model.checked, onCheck = Checked }
     , Toggle.disabled True
     ]
 """
-            , children =
-                [ let
-                    bStr =
-                        if model.flag then
-                            "True"
+        , children =
+            [ let
+                bStr =
+                    if model.flag then
+                        "True"
 
-                        else
-                            "False"
-                  in
-                  pre [ class "overflow-auto" ]
-                    [ text ("model.checked = " ++ bStr)
-                    ]
-                , div []
-                    [ Toggle.view { checked = model.flag, onCheck = Checked }
-                        [ Toggle.id "flag" ]
-                    , label [ Html.Attributes.for "flag", class "px-4" ] [ text "checkbox label" ]
-                    ]
-                , div []
-                    [ Toggle.view { checked = model.flag, onCheck = Checked }
-                        [ Toggle.id "flag2", Toggle.error True ]
-                    , label [ Html.Attributes.for "flag2", class "px-4" ] [ text "checkbox label" ]
-                    ]
-                , div []
-                    [ Toggle.view { checked = model.flag, onCheck = Checked }
-                        [ Toggle.id "flag3", Toggle.disabled True ]
-                    , label [ Html.Attributes.for "flag3", class "px-4" ] [ text "checkbox label" ]
-                    ]
+                    else
+                        "False"
+              in
+              pre [ class "overflow-auto" ]
+                [ text ("model.checked = " ++ bStr)
                 ]
-            }
-        , viewSection
-            { title = "Buttons"
-            , example = """Button.primary [ Button.size Button.lg ] "Click me"
+            , div []
+                [ Toggle.view { checked = model.flag, onCheck = Checked }
+                    [ Toggle.id "flag" ]
+                , label [ Html.Attributes.for "flag", class "px-4" ] [ text "checkbox label" ]
+                ]
+            , div []
+                [ Toggle.view { checked = model.flag, onCheck = Checked }
+                    [ Toggle.id "flag2", Toggle.error True ]
+                , label [ Html.Attributes.for "flag2", class "px-4" ] [ text "checkbox label" ]
+                ]
+            , div []
+                [ Toggle.view { checked = model.flag, onCheck = Checked }
+                    [ Toggle.id "flag3", Toggle.disabled True ]
+                , label [ Html.Attributes.for "flag3", class "px-4" ] [ text "checkbox label" ]
+                ]
+            ]
+        }
+
+
+buttons : Html msg
+buttons =
+    viewSection
+        { title = "Buttons"
+        , example = """Button.primary [ Button.size Button.lg ] "Click me"
 
 Button.outline
     [ Button.size Button.md
@@ -446,28 +479,31 @@ Button.outline
     ]
     "Click me"
 """
-            , children =
-                [ Button.primary [ Button.size Button.lg ] "Primary lg"
-                , Button.primary [ Button.size Button.md ] "Primary md"
-                , Button.primary [ Button.size Button.sm ] "Primary sm"
-                , Button.outline [ Button.size Button.lg ] "Outline lg"
-                , Button.outline [ Button.size Button.md ] "Outline md"
-                , Button.outline [ Button.size Button.sm ] "Outline sm"
-                , Button.outline
-                    [ Button.size Button.lg
-                    , Button.icon FeatherIcons.download
-                    ]
-                    "Icon"
+        , children =
+            [ Button.primary [ Button.size Button.lg ] "Primary lg"
+            , Button.primary [ Button.size Button.md ] "Primary md"
+            , Button.primary [ Button.size Button.sm ] "Primary sm"
+            , Button.outline [ Button.size Button.lg ] "Outline lg"
+            , Button.outline [ Button.size Button.md ] "Outline md"
+            , Button.outline [ Button.size Button.sm ] "Outline sm"
+            , Button.outline
+                [ Button.size Button.lg
+                , Button.icon FeatherIcons.download
                 ]
-            }
-        ]
-
-
-main : Program () Model Msg
-main =
-    Browser.element
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = \_ -> Sub.none
+                "Icon"
+            , Button.ghost [ Button.size Button.sm ] "Link"
+            ]
         }
+
+
+view : Model -> Html Msg
+view model =
+    viewSections
+        [ buttons
+        , actionBtn model
+        , textFields model
+        , autocomplete model
+        , switch model
+        , checkbox model
+        , card
+        ]
