@@ -31,7 +31,7 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Checked b ->
-            { model | flag = model.flag }
+            { model | flag = b }
 
 
 get : Model -> (Msg -> msg) -> Section.Section msg

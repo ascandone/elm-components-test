@@ -64,6 +64,13 @@ update msg model =
             )
 
 
+options : List Autocomplete.Option
+options =
+    List.range 0 20
+        |> List.map String.fromInt
+        |> List.map (\i -> Autocomplete.simpleOption ("item--" ++ i))
+
+
 get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make

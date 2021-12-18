@@ -1,19 +1,16 @@
 module Main exposing (Model, main)
 
 import Browser
-import Components.ActionButton as ActionButton
 import Components.Autocomplete as Autocomplete
-import Components.Button as Button
-import Components.Card as Card
-import Components.Switch as Switch
-import Components.TextField as TextField
-import Components.Toggle as Toggle
-import FeatherIcons
 import Html exposing (..)
-import Html.Attributes exposing (class)
 import Section exposing (Section)
+import Section.ActionBtn
+import Section.Autocomplete
+import Section.Button
 import Section.Card
-import Section.ComplexForm as ComplexForm
+import Section.Checkbox
+import Section.Switch
+import Section.TextField
 
 
 main : Program () Model Msg
@@ -26,441 +23,80 @@ main =
         }
 
 
-validateEmail : String -> Result String ( String, String )
-validateEmail mail =
-    case String.split "@" mail of
-        [ name, domain ] ->
-            Ok ( name, domain )
-
-        _ ->
-            Err "Invalid email"
-
-
 type alias Model =
-    { flag : Bool
+    { textFieldModel : Section.TextField.Model
+    , switchModel : Section.Switch.Model
+    , autocompleteModel : Section.Autocomplete.Model
+    , flag : Bool
     , selectedValue : Int
-    , textField : String
-    , autocompleteModel : Autocomplete.Model
-    , autocompleteModel2 : Autocomplete.Model
-    , autocompleteModel3 : Autocomplete.Model
-    , favorited : Bool
-    , collapsed : Bool
-    , complexFormModel : ComplexForm.Model
+    , actionBtnModel : Section.ActionBtn.Model
+    , checkBoxModel : Section.Checkbox.Model
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init () =
-    ( { flag = False
+    ( { textFieldModel = Section.TextField.init
+      , checkBoxModel = Section.Checkbox.init
+      , switchModel = Section.Switch.init
+      , flag = False
       , selectedValue = 0
-      , textField = "my-mail@example.com"
-      , autocompleteModel = Autocomplete.init
-      , autocompleteModel2 = Autocomplete.init
-      , autocompleteModel3 = Autocomplete.init
-      , favorited = False
-      , collapsed = True
-      , complexFormModel = ComplexForm.init
+      , autocompleteModel = Section.Autocomplete.init
+      , actionBtnModel = Section.ActionBtn.init
       }
     , Cmd.none
     )
 
 
 type Msg
-    = Checked Bool
-    | Selected Int
-    | Input String
-    | AutocompleteMsg Autocomplete.Msg
-    | AutocompleteMsg2 Autocomplete.Msg
-    | AutocompleteMsg3 Autocomplete.Msg
-    | ToggledFavorite
-    | ToggleCollapsed
+    = TextFieldMsg Section.TextField.Msg
+    | SwitchMsg Section.Switch.Msg
+    | CheckedMsg Section.Checkbox.Msg
+    | AutocompleteMsg Section.Autocomplete.Msg
+    | ActionBtnMsg Section.ActionBtn.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Selected x ->
-            ( { model | selectedValue = x }
+        SwitchMsg subMsg ->
+            ( { model | switchModel = Section.Switch.update subMsg model.switchModel }
             , Cmd.none
             )
 
-        Checked b ->
-            ( { model | flag = b }
-            , Cmd.none
-            )
-
-        Input str ->
-            ( { model | textField = str }
+        TextFieldMsg subMsg ->
+            ( { model | textFieldModel = Section.TextField.update subMsg model.textFieldModel }
             , Cmd.none
             )
 
         AutocompleteMsg subMsg ->
             let
                 ( newModel, cmd ) =
-                    Autocomplete.update subMsg model.autocompleteModel
+                    Section.Autocomplete.update subMsg model.autocompleteModel
             in
             ( { model | autocompleteModel = newModel }
             , Cmd.map AutocompleteMsg cmd
             )
 
-        AutocompleteMsg2 subMsg ->
-            let
-                ( newModel, cmd ) =
-                    Autocomplete.update subMsg model.autocompleteModel2
-            in
-            ( { model | autocompleteModel2 = newModel }
-            , Cmd.map AutocompleteMsg2 cmd
-            )
-
-        AutocompleteMsg3 subMsg ->
-            let
-                ( newModel, cmd ) =
-                    Autocomplete.update subMsg model.autocompleteModel3
-            in
-            ( { model | autocompleteModel3 = newModel }
-            , Cmd.map AutocompleteMsg3 cmd
-            )
-
-        ToggledFavorite ->
-            ( { model | favorited = not model.favorited }
+        ActionBtnMsg subMsg ->
+            ( { model | actionBtnModel = Section.ActionBtn.update subMsg model.actionBtnModel }
             , Cmd.none
             )
 
-        ToggleCollapsed ->
-            ( { model | collapsed = not model.collapsed }
+        CheckedMsg subMsg ->
+            ( { model | checkBoxModel = Section.Checkbox.update subMsg model.checkBoxModel }
             , Cmd.none
             )
-
-
-options : List Autocomplete.Option
-options =
-    List.range 0 20
-        |> List.map String.fromInt
-        |> List.map (\i -> Autocomplete.simpleOption ("item--" ++ i))
-
-
-actionBtn : Model -> Section Msg
-actionBtn model =
-    Section.make
-        { title = "Icon button"
-        , example = """ActionButton.ghost
-    [ ActionButton.class "transition-color duration-200"
-    , ActionButton.class <|
-        if model.favorited then
-            "fill-red-400 text-red-400"
-
-        else
-            ""
-    , ActionButton.onClick ToggledFavorite
-    ]
-    Icon.heart
-
-ActionButton.ghost
-    [ ActionButton.class "transition-all duration-200 ease-in-out"
-    , ActionButton.class <|
-        if model.collapsed then
-            "text-gray-900"
-
-        else
-            "rotate-180 text-gray-600"
-            
-    , ActionButton.onClick ToggleCollapsed
-    ]
-    Icon.chevronDown
-
-ActionButton.filled [ ActionButton.size ActionButton.sm ] Icon.cross
-
-ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
-        , children =
-            [ ActionButton.view
-                [ ActionButton.class "transition-color duration-200 ease-in-out"
-                , ActionButton.class <|
-                    if model.favorited then
-                        "fill-red-400 text-red-400"
-
-                    else
-                        ""
-                , ActionButton.onClick ToggledFavorite
-                , ActionButton.size ActionButton.md
-                ]
-                FeatherIcons.heart
-            , ActionButton.view
-                [ ActionButton.class "transition-all duration-200 ease-in-out"
-                , ActionButton.class <|
-                    if model.collapsed then
-                        "text-gray-900"
-
-                    else
-                        "rotate-180 text-gray-600"
-                , ActionButton.onClick ToggleCollapsed
-                ]
-                FeatherIcons.chevronDown
-            , ActionButton.view
-                [ ActionButton.size ActionButton.sm
-                ]
-                FeatherIcons.x
-            , ActionButton.view
-                [ ActionButton.size ActionButton.lg
-                ]
-                FeatherIcons.downloadCloud
-            ]
-        }
-
-
-textFields : Model -> Section Msg
-textFields model =
-    Section.make
-        { title = "Text fields"
-        , example = """TextField.view
-    [ TextField.value model.textField
-    , TextField.onInput Input
-    , TextField.validation (validateEmail model.textField)
-    , TextField.autofocus True
-    , TextField.placeholder "example.gmail.com"
-    , TextField.icon Icons.user
-    ]
-"""
-        , children =
-            [ pre [ class "overflow-auto" ] [ text ("model.textField = " ++ model.textField) ]
-            , TextField.view
-                [ TextField.value model.textField
-                , TextField.onInput Input
-                , TextField.validation (validateEmail model.textField)
-                , TextField.placeholder "example@gmail.com"
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.validation (Err "Inserisci una mail valida")
-                , TextField.placeholder "example@gmail.com"
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                , TextField.disabled True
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                , TextField.icon FeatherIcons.user
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                , TextField.actionIcon [ ActionButton.size ActionButton.sm ] FeatherIcons.x
-                ]
-            ]
-        }
-
-
-autocomplete : Model -> Section Msg
-autocomplete model =
-    Section.make
-        { title = "Autocomplete text fields"
-        , example = """Autocomplete.view [ Autocomplete.placeholder "search something" ]
-    { model = model.autocompleteModel
-    , toMsg = AutocompleteMsg
-    , options =
-        Just
-            [ Autocomplete.option "ITA" "Italy"
-            , Autocomplete.option "GER" "Germany"
-            , Autocomplete.option "FRA" "France"
-            ]
-    }
-
-Autocomplete.view [ Autocomplete.placeholder "search something" ]
-    { model = model.autocompleteModel
-    , toMsg = AutocompleteMsg
-    , options = Nothing
-    }
-
-Autocomplete.view
-    [ Autocomplete.placeholder "Enter branch name..."
-    , Autocomplete.freshOption
-        (\\s ->
-           [ text "Add `"
-           , bold [] [ text s ]
-           , text "`"
-           ]
-       )
-    ]
-    { model = model.autocompleteModel
-    , toMsg = AutocompleteMsg
-    , options = Nothing
-    }"""
-        , children =
-            [ pre [ class "overflow-auto" ]
-                [ if model.autocompleteModel.selected then
-                    text ("id = " ++ model.autocompleteModel.value)
-
-                  else
-                    text "No items selected"
-                ]
-            , Autocomplete.view [ Autocomplete.placeholder "enter \"item\"" ]
-                { model = model.autocompleteModel
-                , toMsg = AutocompleteMsg
-                , options = Just options
-                }
-            , Autocomplete.view [ Autocomplete.placeholder "search something" ]
-                { model = model.autocompleteModel2
-                , toMsg = AutocompleteMsg2
-                , options = Nothing
-                }
-            , Autocomplete.view
-                [ Autocomplete.placeholder "Enter branch name..."
-                , Autocomplete.freshOption
-                    (\s ->
-                        [ text ""
-                        , text "Add `"
-                        , span [ class "font-medium text-gray-700" ] [ text s ]
-                        , text "`"
-                        ]
-                    )
-                ]
-                { model = model.autocompleteModel3
-                , toMsg = AutocompleteMsg3
-                , options =
-                    Just
-                        [ Autocomplete.simpleOption "main"
-                        , Autocomplete.simpleOption "dev"
-                        , Autocomplete.simpleOption "hotfix"
-                        , Autocomplete.simpleOption "experimental"
-                        , Autocomplete.simpleOption "release-candidate"
-                        ]
-                }
-            ]
-        }
-
-
-switch : Model -> Section Msg
-switch model =
-    Section.make
-        { title = "Switch"
-        , example = """Switch.view
-    { selected = model.selectedValue
-    , onSelected = Selected
-    }
-    [ Switch.item First "First"
-    , Switch.item Second "Second"
-    , Switch.item Third "Third"
-    ]
-"""
-        , children =
-            [ let
-                selectedValue =
-                    case model.selectedValue of
-                        0 ->
-                            "First"
-
-                        1 ->
-                            "Second"
-
-                        2 ->
-                            "Third"
-
-                        _ ->
-                            "??"
-              in
-              pre [ class "overflow-auto" ]
-                [ text ("selected = MyTab." ++ selectedValue)
-                ]
-            , Switch.view { selected = model.selectedValue, onSelected = Selected }
-                [ Switch.item 0 "First"
-                , Switch.item 1 "Second"
-                , Switch.item 2 "Third"
-                ]
-            ]
-        }
-
-
-checkbox : Model -> Section Msg
-checkbox model =
-    Section.make
-        { title = "Checkbox"
-        , example = """Toggle.view { checked = model.checked, onCheck = Checked }
-    [ Toggle.id "toggle-id" ]
-
-Toggle.view { checked = model.checked, onCheck = Checked }
-    [ Toggle.id "toggle-id"
-    , Toggle.error True
-    ]
-
-Toggle.view { checked = model.checked, onCheck = Checked }
-    [ Toggle.id "toggle-id"
-    , Toggle.disabled True
-    ]
-"""
-        , children =
-            [ let
-                bStr =
-                    if model.flag then
-                        "True"
-
-                    else
-                        "False"
-              in
-              pre [ class "overflow-auto" ]
-                [ text ("model.checked = " ++ bStr)
-                ]
-            , div []
-                [ Toggle.view { checked = model.flag, onCheck = Checked }
-                    [ Toggle.id "flag" ]
-                , label [ Html.Attributes.for "flag", class "px-4" ] [ text "checkbox label" ]
-                ]
-            , div []
-                [ Toggle.view { checked = model.flag, onCheck = Checked }
-                    [ Toggle.id "flag2", Toggle.error True ]
-                , label [ Html.Attributes.for "flag2", class "px-4" ] [ text "checkbox label" ]
-                ]
-            , div []
-                [ Toggle.view { checked = model.flag, onCheck = Checked }
-                    [ Toggle.id "flag3", Toggle.disabled True ]
-                , label [ Html.Attributes.for "flag3", class "px-4" ] [ text "checkbox label" ]
-                ]
-            ]
-        }
-
-
-buttons : Section msg
-buttons =
-    Section.make
-        { title = "Buttons"
-        , example = """Button.primary [ Button.size Button.lg ] "Click me"
-
-Button.outline
-    [ Button.size Button.md
-    , Button.icon Icons.cross
-    ]
-    "Click me"
-"""
-        , children =
-            [ Button.primary [ Button.size Button.lg ] "Primary lg"
-            , Button.primary [ Button.size Button.md ] "Primary md"
-            , Button.primary [ Button.size Button.sm ] "Primary sm"
-            , Button.outline [ Button.size Button.lg ] "Outline lg"
-            , Button.outline [ Button.size Button.md ] "Outline md"
-            , Button.outline [ Button.size Button.sm ] "Outline sm"
-            , Button.outline
-                [ Button.size Button.lg
-                , Button.icon FeatherIcons.download
-                ]
-                "Icon"
-            , Button.ghost [ Button.size Button.sm ] "Link"
-            ]
-        }
 
 
 view : Model -> Html Msg
 view model =
     Section.viewSections
-        [ buttons
-        , actionBtn model
-        , textFields model
-        , autocomplete model
-        , switch model
-        , checkbox model
+        [ Section.Button.get
+        , Section.ActionBtn.get model.actionBtnModel ActionBtnMsg
+        , Section.TextField.get model.textFieldModel TextFieldMsg
+        , Section.Autocomplete.get model.autocompleteModel AutocompleteMsg
+        , Section.Switch.get model.switchModel SwitchMsg
+        , Section.Checkbox.get model.checkBoxModel CheckedMsg
         , Section.Card.get
         ]
