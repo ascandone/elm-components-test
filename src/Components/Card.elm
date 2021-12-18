@@ -134,7 +134,3 @@ view variant attributes slots =
         , div [ Attrs.class "px-4 py-2" ] config.body
         , div [ Attrs.class "px-4 mt-5 mb-3 flex gap-x-2 justify-end" ] config.actions
         ]
-
-
-y =
-    100
