@@ -1,4 +1,4 @@
-module Utils exposing (getMakeConfig)
+module Utils exposing (getMakeConfig, kebabCase)
 
 
 getMakeConfig :
@@ -9,3 +9,8 @@ getMakeConfig :
     -> config
 getMakeConfig args =
     List.foldl (\attr conf -> args.unwrap attr conf) args.defaultConfig
+
+
+kebabCase : String -> String
+kebabCase =
+    String.replace " " "-" >> String.toLower

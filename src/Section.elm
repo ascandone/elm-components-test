@@ -5,8 +5,10 @@ module Section exposing
     , viewSections
     )
 
+import FeatherIcons
 import Html exposing (..)
 import Html.Attributes exposing (class)
+import Utils
 
 
 type Section msg
@@ -42,8 +44,20 @@ static args =
 
 sectionTitle : String -> Html msg
 sectionTitle label =
+    let
+        id_ =
+            Utils.kebabCase label
+    in
     container
-        [ h2 [ class "font-bold text-gray-900 mb-4 text-xl" ] [ text label ]
+        [ a
+            [ Html.Attributes.href ("#" ++ id_)
+            , Html.Attributes.id id_
+            , class "inline-flex justify-center items-center mb-4 hover:underline"
+            ]
+            [ h2 [ class "font-bold text-gray-900 text-xl" ] [ text label ]
+            , span [ class "ml-2" ]
+                [ FeatherIcons.link |> FeatherIcons.withSize 16 |> FeatherIcons.toHtml [] ]
+            ]
         ]
 
 
