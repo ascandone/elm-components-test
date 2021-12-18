@@ -132,7 +132,7 @@ update msg model =
             ( { model | focused = False }, Cmd.none )
 
         InternalInput str ->
-            ( { model | value = str }, Cmd.none )
+            ( { model | value = str, selected = False }, Cmd.none )
 
         Selected option_ ->
             ( { model
