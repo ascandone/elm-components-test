@@ -119,7 +119,7 @@ view variant attrs icon =
                         "hover:bg-slate-100 "
 
                     Filled ->
-                        "bg-slate-100"
+                        "bg-slate-100 hover:bg-slate-900 hover:text-slate-100 transition-color duration-100"
             ]
         )
         [ icon
