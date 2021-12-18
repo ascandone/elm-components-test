@@ -217,6 +217,7 @@ view model =
     , TextField.validation (validateEmail model.textField)
     , TextField.autofocus True
     , TextField.placeholder "example.gmail.com"
+    , TextField.icon Icons.user
     ]
 """
             , children =
@@ -240,6 +241,11 @@ view model =
                     [ TextField.value ""
                     , TextField.placeholder "example@gmail.com"
                     , TextField.disabled True
+                    ]
+                , TextField.view
+                    [ TextField.value ""
+                    , TextField.placeholder "example@gmail.com"
+                    , TextField.icon FeatherIcons.user
                     ]
                 ]
             }
