@@ -1,12 +1,12 @@
-module Section.Button exposing (..)
+module Section.Button exposing (get)
 
 import Components.Button as Button
 import FeatherIcons
 import Section exposing (Section)
 
 
-buttons : Section msg
-buttons =
+get : Section msg
+get =
     Section.static
         { title = "Buttons"
         , example = """Button.primary [ Button.size Button.lg ] "Click me"
