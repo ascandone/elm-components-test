@@ -30,6 +30,7 @@ type alias Model =
     , autocompleteModel : Autocomplete.Model
     , autocompleteModel2 : Autocomplete.Model
     , favorited : Bool
+    , collapsed : Bool
     }
 
 
@@ -41,6 +42,7 @@ init () =
       , autocompleteModel = Autocomplete.init
       , autocompleteModel2 = Autocomplete.init
       , favorited = False
+      , collapsed = True
       }
     , Cmd.none
     )
@@ -53,6 +55,7 @@ type Msg
     | AutocompleteMsg Autocomplete.Msg
     | AutocompleteMsg2 Autocomplete.Msg
     | ToggledFavorite
+    | ToggleCollapsed
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -93,6 +96,11 @@ update msg model =
 
         ToggledFavorite ->
             ( { model | favorited = not model.favorited }
+            , Cmd.none
+            )
+
+        ToggleCollapsed ->
+            ( { model | collapsed = not model.collapsed }
             , Cmd.none
             )
 
@@ -191,7 +199,19 @@ view model =
             ""
     , ActionButton.onClick ToggledFavorite
     ]
-    Icon.heart"""
+    Icon.heart
+
+ActionButton.view
+    [ ActionButton.class "transition-all duration-200 ease-in-out"
+    , ActionButton.class <|
+        if model.collapsed then
+            "rotate-180 text-gray-600"
+
+        else
+            "text-gray-900"
+    , ActionButton.onClick ToggleCollapsed
+    ]
+    FeatherIcons.chevronDown"""
             , children =
                 [ ActionButton.view
                     [ ActionButton.class "transition-color duration-200 ease-in-out"
@@ -204,6 +224,17 @@ view model =
                     , ActionButton.onClick ToggledFavorite
                     ]
                     FeatherIcons.heart
+                , ActionButton.view
+                    [ ActionButton.class "transition-all duration-200 ease-in-out"
+                    , ActionButton.class <|
+                        if model.collapsed then
+                            "rotate-180 text-gray-600"
+
+                        else
+                            "text-gray-900"
+                    , ActionButton.onClick ToggleCollapsed
+                    ]
+                    FeatherIcons.chevronDown
                 ]
             }
         , viewSection
