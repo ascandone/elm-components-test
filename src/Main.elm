@@ -214,15 +214,16 @@ ActionButton.view
     [ ActionButton.class "transition-all duration-200 ease-in-out"
     , ActionButton.class <|
         if model.collapsed then
-            "rotate-180 text-gray-600"
+            "text-gray-900"
 
         else
-            "text-gray-900"
+            "rotate-180 text-gray-600"
+            
     , ActionButton.onClick ToggleCollapsed
     ]
     FeatherIcons.chevronDown"""
         , children =
-            [ ActionButton.view
+            [ ActionButton.ghost
                 [ ActionButton.class "transition-color duration-200 ease-in-out"
                 , ActionButton.class <|
                     if model.favorited then
@@ -233,17 +234,18 @@ ActionButton.view
                 , ActionButton.onClick ToggledFavorite
                 ]
                 FeatherIcons.heart
-            , ActionButton.view
+            , ActionButton.ghost
                 [ ActionButton.class "transition-all duration-200 ease-in-out"
                 , ActionButton.class <|
                     if model.collapsed then
-                        "rotate-180 text-gray-600"
+                        "text-gray-900"
 
                     else
-                        "text-gray-900"
+                        "rotate-180 text-gray-600"
                 , ActionButton.onClick ToggleCollapsed
                 ]
                 FeatherIcons.chevronDown
+            , ActionButton.filled [] FeatherIcons.x
             ]
         }
 
