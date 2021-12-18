@@ -15,16 +15,18 @@ type Section msg
 make :
     { title : String
     , example : String
-    , children : List (Html msg)
+    , children : List (Html subMsg)
     }
+    -> (subMsg -> msg)
     -> Section msg
-make { children, title, example } =
+make { children, title, example } wrapMsg =
     Section <|
-        div []
-            [ sectionTitle title
-            , codeExample example
-            , spacerContainer children
-            ]
+        Html.map wrapMsg <|
+            div []
+                [ sectionTitle title
+                , codeExample example
+                , spacerContainer children
+                ]
 
 
 sectionTitle : String -> Html msg
