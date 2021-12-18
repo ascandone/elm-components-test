@@ -191,7 +191,7 @@ view attrs_ { model, toMsg, options } =
                     absolute inset-x-0
                     z-20
                     """
-                    , Attrs.classList [ ( "hidden", not model.focused || String.isEmpty model.value ) ]
+                    , Attrs.classList [ ( "hidden", not model.focused || (String.isEmpty model.value && options == Nothing) ) ]
                     ]
                     (case options of
                         Nothing ->
