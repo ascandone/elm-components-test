@@ -1,4 +1,4 @@
-module Components.ActionButton exposing (Attribute, class, onClick, view)
+module Components.ActionButton exposing (Attribute, Size, class, filled, ghost, lg, md, onClick, size, sm)
 
 import FeatherIcons
 import Html exposing (..)
@@ -10,6 +10,7 @@ import Utils
 type alias Config msg =
     { attributes : List (Html.Attribute msg)
     , classNames : List String
+    , size : Size
     }
 
 
@@ -17,6 +18,7 @@ defaultConfig : Config msg
 defaultConfig =
     { attributes = []
     , classNames = []
+    , size = Md
     }
 
 
@@ -47,8 +49,52 @@ onClick =
     attribute << Html.Events.onClick
 
 
-view : List (Attribute msg) -> FeatherIcons.Icon -> Html msg
-view attrs icon =
+type Size
+    = Sm
+    | Md
+    | Lg
+
+
+sm : Size
+sm =
+    Sm
+
+
+md : Size
+md =
+    Md
+
+
+lg : Size
+lg =
+    Lg
+
+
+size : Size -> Attribute msg
+size value =
+    Attribute <| \c -> { c | size = value }
+
+
+type Variant
+    = Ghost
+    | Filled
+
+
+getSize : Size -> Float
+getSize size_ =
+    case size_ of
+        Sm ->
+            16
+
+        Md ->
+            24
+
+        Lg ->
+            32
+
+
+view : Variant -> List (Attribute msg) -> FeatherIcons.Icon -> Html msg
+view variant attrs icon =
     let
         config =
             makeConfig attrs
@@ -56,10 +102,38 @@ view attrs icon =
     button
         (List.append
             config.attributes
-            [ A.class "hover:bg-slate-100 px-2 py-2 rounded-full" ]
+            [ A.class "rounded-full"
+            , A.class <|
+                case config.size of
+                    Sm ->
+                        "p-1"
+
+                    Md ->
+                        "p-2"
+
+                    Lg ->
+                        "p-3"
+            , A.class <|
+                case variant of
+                    Ghost ->
+                        "hover:bg-slate-100 "
+
+                    Filled ->
+                        "bg-slate-100"
+            ]
         )
         [ icon
-            |> FeatherIcons.withSize 24
+            |> FeatherIcons.withSize (getSize config.size)
             |> FeatherIcons.withClass (String.join " " config.classNames)
             |> FeatherIcons.toHtml []
         ]
+
+
+ghost : List (Attribute msg) -> FeatherIcons.Icon -> Html msg
+ghost =
+    view Ghost
+
+
+filled : List (Attribute msg) -> FeatherIcons.Icon -> Html msg
+filled =
+    view Filled

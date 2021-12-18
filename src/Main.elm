@@ -198,7 +198,7 @@ actionBtn : Model -> Html Msg
 actionBtn model =
     viewSection
         { title = "Icon button"
-        , example = """ActionButton.view
+        , example = """ActionButton.ghost
     [ ActionButton.class "transition-color duration-200"
     , ActionButton.class <|
         if model.favorited then
@@ -210,7 +210,7 @@ actionBtn model =
     ]
     Icon.heart
 
-ActionButton.view
+ActionButton.ghost
     [ ActionButton.class "transition-all duration-200 ease-in-out"
     , ActionButton.class <|
         if model.collapsed then
@@ -221,7 +221,11 @@ ActionButton.view
             
     , ActionButton.onClick ToggleCollapsed
     ]
-    FeatherIcons.chevronDown"""
+    Icon.chevronDown
+
+ActionButton.filled [ ActionButton.size ActionButton.sm ] Icon.cross
+
+ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
         , children =
             [ ActionButton.ghost
                 [ ActionButton.class "transition-color duration-200 ease-in-out"
@@ -232,6 +236,7 @@ ActionButton.view
                     else
                         ""
                 , ActionButton.onClick ToggledFavorite
+                , ActionButton.size ActionButton.md
                 ]
                 FeatherIcons.heart
             , ActionButton.ghost
@@ -245,7 +250,14 @@ ActionButton.view
                 , ActionButton.onClick ToggleCollapsed
                 ]
                 FeatherIcons.chevronDown
-            , ActionButton.filled [] FeatherIcons.x
+            , ActionButton.filled
+                [ ActionButton.size ActionButton.sm
+                ]
+                FeatherIcons.x
+            , ActionButton.ghost
+                [ ActionButton.size ActionButton.lg
+                ]
+                FeatherIcons.downloadCloud
             ]
         }
 
