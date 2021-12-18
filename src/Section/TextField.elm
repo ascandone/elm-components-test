@@ -46,7 +46,7 @@ validateEmail mail =
             Err "Invalid email"
 
 
-get : { a | textField : String } -> (Msg -> msg) -> Section.Section msg
+get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make
         { title = "Text fields"
