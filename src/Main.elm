@@ -1,6 +1,7 @@
 module Main exposing (Model, main)
 
 import Browser
+import Components.ActionButton as ActionButton
 import Components.Autocomplete as Autocomplete
 import Components.Button as Button
 import Components.Card as Card
@@ -28,6 +29,7 @@ type alias Model =
     , textField : String
     , autocompleteModel : Autocomplete.Model
     , autocompleteModel2 : Autocomplete.Model
+    , favorited : Bool
     }
 
 
@@ -38,6 +40,7 @@ init () =
       , textField = "my-mail@example.com"
       , autocompleteModel = Autocomplete.init
       , autocompleteModel2 = Autocomplete.init
+      , favorited = False
       }
     , Cmd.none
     )
@@ -49,6 +52,7 @@ type Msg
     | Input String
     | AutocompleteMsg Autocomplete.Msg
     | AutocompleteMsg2 Autocomplete.Msg
+    | ToggledFavorite
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -85,6 +89,11 @@ update msg model =
             in
             ( { model | autocompleteModel2 = newModel }
             , Cmd.map AutocompleteMsg2 cmd
+            )
+
+        ToggledFavorite ->
+            ( { model | favorited = not model.favorited }
+            , Cmd.none
             )
 
 
@@ -171,6 +180,33 @@ view : Model -> Html Msg
 view model =
     viewSections
         [ viewSection
+            { title = "Icon button"
+            , example = """ActionButton.view
+    [ ActionButton.class "transition-color duration-200"
+    , ActionButton.class <|
+        if model.favorited then
+            "fill-red-400 text-red-400"
+
+        else
+            ""
+    , ActionButton.onClick ToggledFavorite
+    ]
+    Icon.heart"""
+            , children =
+                [ ActionButton.view
+                    [ ActionButton.class "transition-color duration-200 ease-in-out"
+                    , ActionButton.class <|
+                        if model.favorited then
+                            "fill-red-400 text-red-400"
+
+                        else
+                            ""
+                    , ActionButton.onClick ToggledFavorite
+                    ]
+                    FeatherIcons.heart
+                ]
+            }
+        , viewSection
             { title = "Card"
             , example = """Card.raised [ Card.dataTestId "lizard-card" ]
     [ Card.media [] { src = "..." }
