@@ -386,7 +386,21 @@ Autocomplete.view [ Autocomplete.placeholder "search something" ]
     , toMsg = AutocompleteMsg
     , options = Nothing
     }
-"""
+
+Autocomplete.view
+    [ Autocomplete.placeholder "Enter branch name..."
+    , Autocomplete.freshOption
+        (\\s ->
+           [ text "Add `"
+           , bold [] [ text s ]
+           , text "`"
+           ]
+       )
+    ]
+    { model = model.autocompleteModel
+    , toMsg = AutocompleteMsg
+    , options = Nothing
+    }"""
         , children =
             [ pre [ class "overflow-auto" ]
                 [ if model.autocompleteModel.selected then
