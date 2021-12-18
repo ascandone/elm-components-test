@@ -3,6 +3,7 @@ module Components.Autocomplete exposing
     , Model
     , Msg
     , Option
+    , freshOption
     , getSelected
     , getValue
     , init
@@ -32,12 +33,14 @@ type alias Option =
 
 type alias Config msg =
     { textFieldAttributes : List (TextField.Attribute msg)
+    , freshOption : Maybe (String -> List (Html Never))
     }
 
 
 defaultConfig : Config msg
 defaultConfig =
     { textFieldAttributes = []
+    , freshOption = Nothing
     }
 
 
@@ -53,6 +56,11 @@ textFieldAttribute attr_ =
 placeholder : String -> Attribute msg
 placeholder =
     textFieldAttribute << TextField.placeholder
+
+
+freshOption : (String -> List (Html Never)) -> Attribute msg
+freshOption value =
+    Attribute <| \c -> { c | freshOption = Just value }
 
 
 option :
@@ -198,9 +206,36 @@ view attrs_ { model, toMsg, options } =
                             List.repeat 6 viewPlaceholder
 
                         Just options_ ->
-                            options_
-                                |> List.filter (\option_ -> option_.label |> String.contains model.value)
-                                |> viewOptions
+                            List.append
+                                (options_
+                                    |> List.filter (\option_ -> option_.label |> String.contains model.value)
+                                    |> viewOptions { hasFreshOption = config.freshOption /= Nothing } model
+                                )
+                                (case config.freshOption of
+                                    Nothing ->
+                                        []
+
+                                    Just getHtml ->
+                                        let
+                                            isOptionPresent () =
+                                                options
+                                                    |> Maybe.withDefault []
+                                                    |> List.any (\option_ -> option_.id == model.value)
+                                        in
+                                        if String.isEmpty model.value || isOptionPresent () then
+                                            []
+
+                                        else
+                                            --TODO should be a button
+                                            [ div
+                                                [ optionCommonCls
+                                                , Attrs.class "text-gray-600 font-light block w-full"
+                                                , Html.Events.onMouseDown (simpleOption model.value)
+                                                ]
+                                                (List.map (Html.map never) (getHtml model.value))
+                                            ]
+                                )
+                                |> List.intersperse (div [ Attrs.class "h-2" ] [])
                     )
             ]
 
@@ -212,23 +247,38 @@ viewPlaceholder =
         ]
 
 
-viewOptions : List Option -> List (Html Option)
-viewOptions options =
-    case options of
-        [] ->
+viewOptions : { hasFreshOption : Bool } -> Model -> List Option -> List (Html Option)
+viewOptions { hasFreshOption } model options =
+    case ( options, hasFreshOption ) of
+        ( [], False ) ->
             [ div [ Attrs.class "px-3 py-3 text-gray-600" ]
                 [ text "Cannot find data" ]
             ]
 
-        _ ->
+        ( _ :: _, _ ) ->
             options
-                |> List.map viewOption
+                |> List.map (\o -> viewOption { isSelected = getSelected model == Just o.id } o)
+
+        _ ->
+            []
 
 
-viewOption : Option -> Html Option
-viewOption option_ =
+optionCommonCls : Html.Attribute msg
+optionCommonCls =
+    Attrs.class "px-3 py-2 cursor-pointer hover:bg-gray-100"
+
+
+viewOption : { isSelected : Bool } -> Option -> Html Option
+viewOption { isSelected } option_ =
     div
-        [ Attrs.class "px-3 py-2 text-gray-800 font-medium cursor-pointer hover:bg-gray-100"
+        [ optionCommonCls
+        , Attrs.class "text-gray-800 font-medium"
+        , Attrs.class <|
+            if isSelected then
+                "bg-gray-100"
+
+            else
+                ""
         , Html.Events.onMouseDown option_
         ]
         [ text option_.label ]

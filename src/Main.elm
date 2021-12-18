@@ -39,6 +39,7 @@ type alias Model =
     , textField : String
     , autocompleteModel : Autocomplete.Model
     , autocompleteModel2 : Autocomplete.Model
+    , autocompleteModel3 : Autocomplete.Model
     , favorited : Bool
     , collapsed : Bool
     }
@@ -51,6 +52,7 @@ init () =
       , textField = "my-mail@example.com"
       , autocompleteModel = Autocomplete.init
       , autocompleteModel2 = Autocomplete.init
+      , autocompleteModel3 = Autocomplete.init
       , favorited = False
       , collapsed = True
       }
@@ -64,6 +66,7 @@ type Msg
     | Input String
     | AutocompleteMsg Autocomplete.Msg
     | AutocompleteMsg2 Autocomplete.Msg
+    | AutocompleteMsg3 Autocomplete.Msg
     | ToggledFavorite
     | ToggleCollapsed
 
@@ -102,6 +105,15 @@ update msg model =
             in
             ( { model | autocompleteModel2 = newModel }
             , Cmd.map AutocompleteMsg2 cmd
+            )
+
+        AutocompleteMsg3 subMsg ->
+            let
+                ( newModel, cmd ) =
+                    Autocomplete.update subMsg model.autocompleteModel3
+            in
+            ( { model | autocompleteModel3 = newModel }
+            , Cmd.map AutocompleteMsg3 cmd
             )
 
         ToggledFavorite ->
@@ -392,6 +404,28 @@ Autocomplete.view [ Autocomplete.placeholder "search something" ]
                 { model = model.autocompleteModel2
                 , toMsg = AutocompleteMsg2
                 , options = Nothing
+                }
+            , Autocomplete.view
+                [ Autocomplete.placeholder "Enter branch name..."
+                , Autocomplete.freshOption
+                    (\s ->
+                        [ text ""
+                        , text "Add `"
+                        , span [ class "font-medium text-gray-700" ] [ text s ]
+                        , text "`"
+                        ]
+                    )
+                ]
+                { model = model.autocompleteModel3
+                , toMsg = AutocompleteMsg3
+                , options =
+                    Just
+                        [ Autocomplete.simpleOption "main"
+                        , Autocomplete.simpleOption "dev"
+                        , Autocomplete.simpleOption "hotfix"
+                        , Autocomplete.simpleOption "experimental"
+                        , Autocomplete.simpleOption "release-candidate"
+                        ]
                 }
             ]
         }
