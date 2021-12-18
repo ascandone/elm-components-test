@@ -12,6 +12,7 @@ import FeatherIcons
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Section exposing (Section)
+import Section.Card
 import Section.ComplexForm as ComplexForm
 
 
@@ -138,11 +139,6 @@ options =
         |> List.map (\i -> Autocomplete.simpleOption ("item--" ++ i))
 
 
-src : String
-src =
-    "https://mui.com/static/images/cards/contemplative-reptile.jpg"
-
-
 actionBtn : Model -> Section Msg
 actionBtn model =
     Section.make
@@ -207,49 +203,6 @@ ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
                 [ ActionButton.size ActionButton.lg
                 ]
                 FeatherIcons.downloadCloud
-            ]
-        }
-
-
-card : Section msg
-card =
-    Section.make
-        { title = "Card"
-        , example = """Card.raised [ Card.dataTestId "lizard-card" ]
-    [ Card.media [] { src = "..." }
-    , Card.body
-        [ h1 [] [ text "Lizard" ]
-        , p [] [ text "Lizards are a ..." ]
-        ]
-    , Card.actions
-        [ Button.ghost
-            [ Button.size Button.sm
-            , Button.onClick Share
-            ]
-            "Share"
-        , Button.ghost
-            [ Button.size Button.sm
-            , Button.onClick Fav
-            ]
-            "Favorite"
-        ]
-    ]
-            """
-        , children =
-            [ div [ class "max-w-sm" ]
-                [ Card.raised [ Card.dataTestId "lizard-card" ]
-                    [ Card.media [] { src = src }
-                    , Card.body
-                        [ h2 [ class "font-semibold text-xl" ] [ text "Lizard" ]
-                        , p [ class "text-gray-600" ]
-                            [ text "Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica" ]
-                        ]
-                    , Card.actions
-                        [ Button.ghost [ Button.size Button.sm ] "Share"
-                        , Button.ghost [ Button.size Button.sm ] "Favorite"
-                        ]
-                    ]
-                ]
             ]
         }
 
@@ -509,5 +462,5 @@ view model =
         , autocomplete model
         , switch model
         , checkbox model
-        , card
+        , Section.Card.get
         ]
