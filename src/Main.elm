@@ -1,7 +1,6 @@
 module Main exposing (Model, main)
 
 import Browser
-import Components.Autocomplete as Autocomplete
 import Html exposing (..)
 import Section exposing (Section)
 import Section.ActionBtn
@@ -9,6 +8,7 @@ import Section.Autocomplete
 import Section.Button
 import Section.Card
 import Section.Checkbox
+import Section.ComplexForm
 import Section.Switch
 import Section.TextField
 
@@ -16,7 +16,7 @@ import Section.TextField
 main : Program () Model Msg
 main =
     Browser.element
-        { init = init
+        { init = \() -> init
         , view = view
         , update = update
         , subscriptions = \_ -> Sub.none
@@ -27,22 +27,20 @@ type alias Model =
     { textFieldModel : Section.TextField.Model
     , switchModel : Section.Switch.Model
     , autocompleteModel : Section.Autocomplete.Model
-    , flag : Bool
-    , selectedValue : Int
     , actionBtnModel : Section.ActionBtn.Model
     , checkBoxModel : Section.Checkbox.Model
+    , complexFormModel : Section.ComplexForm.Model
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init () =
+init : ( Model, Cmd Msg )
+init =
     ( { textFieldModel = Section.TextField.init
       , checkBoxModel = Section.Checkbox.init
       , switchModel = Section.Switch.init
-      , flag = False
-      , selectedValue = 0
       , autocompleteModel = Section.Autocomplete.init
       , actionBtnModel = Section.ActionBtn.init
+      , complexFormModel = Section.ComplexForm.init
       }
     , Cmd.none
     )
@@ -54,6 +52,7 @@ type Msg
     | CheckedMsg Section.Checkbox.Msg
     | AutocompleteMsg Section.Autocomplete.Msg
     | ActionBtnMsg Section.ActionBtn.Msg
+    | ComplexFormMsg Section.ComplexForm.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -88,6 +87,11 @@ update msg model =
             , Cmd.none
             )
 
+        ComplexFormMsg subMsg ->
+            ( { model | complexFormModel = Section.ComplexForm.update subMsg model.complexFormModel }
+            , Cmd.none
+            )
+
 
 view : Model -> Html Msg
 view model =
@@ -99,4 +103,5 @@ view model =
         , Section.Switch.get model.switchModel SwitchMsg
         , Section.Checkbox.get model.checkBoxModel CheckedMsg
         , Section.Card.get
+        , Section.ComplexForm.get model.complexFormModel ComplexFormMsg
         ]

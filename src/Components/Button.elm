@@ -3,8 +3,10 @@ module Components.Button exposing
     , Size
     , asAnchor
     , asButton
+    , disabled
     , ghost
     , icon
+    , ifValidated
     , lg
     , md
     , onClick
@@ -64,6 +66,21 @@ attribute attr =
     Attribute <| \config -> { config | attributes = attr :: config.attributes }
 
 
+disabled : Bool -> Attribute msg
+disabled =
+    attribute << Attrs.disabled
+
+
+ifValidated : Result x data -> (msg -> Attribute msg) -> (data -> msg) -> Attribute msg
+ifValidated result getAttribute mapper =
+    case result of
+        Err _ ->
+            disabled True
+
+        Ok msg ->
+            getAttribute (mapper msg)
+
+
 onClick : msg -> Attribute msg
 onClick =
     attribute << Html.Events.onClick
@@ -119,7 +136,7 @@ view variant attrs label =
             [ Attrs.class """
             leading-none tracking-wider
             rounded-full box-content
-            disabled:opacity-80
+            disabled:opacity-50 disabled:cursor-not-allowed
             transition-color duration-200
             relative
             """
