@@ -11,6 +11,8 @@ import Components.Toggle as Toggle
 import FeatherIcons
 import Html exposing (..)
 import Html.Attributes exposing (class)
+import Section exposing (Section)
+import Section.ComplexForm as ComplexForm
 
 
 main : Program () Model Msg
@@ -42,6 +44,7 @@ type alias Model =
     , autocompleteModel3 : Autocomplete.Model
     , favorited : Bool
     , collapsed : Bool
+    , complexFormModel : ComplexForm.Model
     }
 
 
@@ -55,6 +58,7 @@ init () =
       , autocompleteModel3 = Autocomplete.init
       , favorited = False
       , collapsed = True
+      , complexFormModel = ComplexForm.init
       }
     , Cmd.none
     )
@@ -127,20 +131,6 @@ update msg model =
             )
 
 
-vSpacer : Html msg
-vSpacer =
-    div [ class "h-10" ] []
-
-
-hRow : Html msg
-hRow =
-    div []
-        [ vSpacer
-        , hr [] []
-        , vSpacer
-        ]
-
-
 options : List Autocomplete.Option
 options =
     List.range 0 20
@@ -148,67 +138,14 @@ options =
         |> List.map (\i -> Autocomplete.simpleOption ("item--" ++ i))
 
 
-sectionTitle : String -> Html msg
-sectionTitle label =
-    container
-        [ h2 [ class "font-bold text-gray-900 mb-4 text-xl" ] [ text label ]
-        ]
-
-
-codeExample : String -> Html msg
-codeExample str =
-    div
-        [ class """
-            mt-2 mb-8 w-full
-            py-4 overflow-x-auto
-            bg-neutral-900 text-neutral-100
-            xl:rounded-md
-            """
-        ]
-        [ container
-            [ code [ class "overflow-x-auto whitespace-pre" ] [ text str ]
-            ]
-        ]
-
-
-container : List (Html msg) -> Html msg
-container =
-    div [ class "px-5" ]
-
-
-spacerContainer : List (Html msg) -> Html msg
-spacerContainer children =
-    container (children |> List.intersperse vSpacer)
-
-
-viewSection :
-    { title : String
-    , example : String
-    , children : List (Html msg)
-    }
-    -> Html msg
-viewSection { children, title, example } =
-    div []
-        [ sectionTitle title
-        , codeExample example
-        , spacerContainer children
-        ]
-
-
-viewSections : List (Html msg) -> Html msg
-viewSections sections =
-    div [ class "max-w-screen-xl mx-auto py-5 pb-20" ]
-        (List.intersperse hRow sections)
-
-
 src : String
 src =
     "https://mui.com/static/images/cards/contemplative-reptile.jpg"
 
 
-actionBtn : Model -> Html Msg
+actionBtn : Model -> Section Msg
 actionBtn model =
-    viewSection
+    Section.make
         { title = "Icon button"
         , example = """ActionButton.ghost
     [ ActionButton.class "transition-color duration-200"
@@ -274,9 +211,9 @@ ActionButton.ghost [ ActionButton.size ActionButton.lg ] Icon.downloadCloud"""
         }
 
 
-card : Html msg
+card : Section msg
 card =
-    viewSection
+    Section.make
         { title = "Card"
         , example = """Card.raised [ Card.dataTestId "lizard-card" ]
     [ Card.media [] { src = "..." }
@@ -317,9 +254,9 @@ card =
         }
 
 
-textFields : Model -> Html Msg
+textFields : Model -> Section Msg
 textFields model =
-    viewSection
+    Section.make
         { title = "Text fields"
         , example = """TextField.view
     [ TextField.value model.textField
@@ -366,9 +303,9 @@ textFields model =
         }
 
 
-autocomplete : Model -> Html Msg
+autocomplete : Model -> Section Msg
 autocomplete model =
-    viewSection
+    Section.make
         { title = "Autocomplete text fields"
         , example = """Autocomplete.view [ Autocomplete.placeholder "search something" ]
     { model = model.autocompleteModel
@@ -445,9 +382,9 @@ Autocomplete.view
         }
 
 
-switch : Model -> Html Msg
+switch : Model -> Section Msg
 switch model =
-    viewSection
+    Section.make
         { title = "Switch"
         , example = """Switch.view
     { selected = model.selectedValue
@@ -486,9 +423,9 @@ switch model =
         }
 
 
-checkbox : Model -> Html Msg
+checkbox : Model -> Section Msg
 checkbox model =
-    viewSection
+    Section.make
         { title = "Checkbox"
         , example = """Toggle.view { checked = model.checked, onCheck = Checked }
     [ Toggle.id "toggle-id" ]
@@ -534,9 +471,9 @@ Toggle.view { checked = model.checked, onCheck = Checked }
         }
 
 
-buttons : Html msg
+buttons : Section msg
 buttons =
-    viewSection
+    Section.make
         { title = "Buttons"
         , example = """Button.primary [ Button.size Button.lg ] "Click me"
 
@@ -565,7 +502,7 @@ Button.outline
 
 view : Model -> Html Msg
 view model =
-    viewSections
+    Section.viewSections
         [ buttons
         , actionBtn model
         , textFields model
