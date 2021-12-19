@@ -45,6 +45,21 @@ get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make
         { title = "Checkbox"
-        , example = "TODO"
+        , example = """--indeterminate
+Checkbox.view
+    [ Checkbox.checkedMaybe Nothing
+    , Checkbox.onCheck Checked
+    ]
+
+Checkbox.view
+    [ Checkbox.checked True
+    , Checkbox.onCheck Checked
+    ]
+
+Checkbox.view
+    [ Checkbox.checked False
+    , Checkbox.onCheck Checked
+    ]
+"""
         , children = view model
         }
