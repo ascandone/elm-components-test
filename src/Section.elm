@@ -1,7 +1,7 @@
 module Section exposing
     ( Section
     , make
-    , spacerContainer
+    , spacerVert
     , static
     , viewSections
     )
@@ -29,7 +29,7 @@ make { children, title, example } wrapMsg =
             div []
                 [ sectionTitle title
                 , codeExample example
-                , spacerContainer children
+                , container (spacerVert children)
                 ]
 
 
@@ -81,9 +81,9 @@ hRow =
         ]
 
 
-spacerContainer : List (Html msg) -> Html msg
-spacerContainer children =
-    container (children |> List.intersperse vSpacer)
+spacerVert : List (Html msg) -> List (Html msg)
+spacerVert =
+    List.intersperse vSpacer
 
 
 viewSections : List (Section msg) -> Html msg

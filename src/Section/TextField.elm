@@ -88,7 +88,7 @@ get model =
         , example = """TextField.view
     [ TextField.value model.textField
     , TextField.onInput Input
-    , TextField.validation (validateEmail model.textField)
+    , TextField.validation validateEmail
     , TextField.autofocus True
     , TextField.placeholder "example.gmail.com"
     , TextField.icon Icons.user
@@ -96,6 +96,6 @@ get model =
 """
         , children =
             [ pre [ class "overflow-auto" ] [ text ("model.textField = " ++ model.textField) ]
-            , div [ class "max-w-sm" ] [ Section.spacerContainer (view model) ]
+            , div [ class "max-w-xs" ] (Section.spacerVert (view model))
             ]
         }

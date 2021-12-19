@@ -172,8 +172,8 @@ view attrs_ { model, toMsg, options } =
             getConfig attrs_
     in
     Html.map toMsg <|
-        div [ Attrs.class "w-64 relative" ]
-            [ div [ Attrs.class "" ]
+        div [ Attrs.class "relative" ]
+            [ div []
                 [ TextField.view
                     (List.concat
                         [ config.textFieldAttributes

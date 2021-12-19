@@ -71,6 +71,43 @@ options =
         |> List.map (\i -> Autocomplete.simpleOption ("item--" ++ i))
 
 
+view : Model -> List (Html Msg)
+view model =
+    [ Autocomplete.view [ Autocomplete.placeholder "enter \"item\"" ]
+        { model = model.autocompleteModel1
+        , toMsg = AutoCompleteteMsg1
+        , options = Just options
+        }
+    , Autocomplete.view [ Autocomplete.placeholder "search something" ]
+        { model = model.autocompleteModel2
+        , toMsg = AutoCompleteteMsg2
+        , options = Nothing
+        }
+    , Autocomplete.view
+        [ Autocomplete.placeholder "Enter branch name..."
+        , Autocomplete.freshOption
+            (\s ->
+                [ text ""
+                , text "Add `"
+                , span [ class "font-medium text-gray-700" ] [ text s ]
+                , text "`"
+                ]
+            )
+        ]
+        { model = model.autocompleteModel3
+        , toMsg = AutoCompleteteMsg3
+        , options =
+            Just
+                [ Autocomplete.simpleOption "main"
+                , Autocomplete.simpleOption "dev"
+                , Autocomplete.simpleOption "hotfix"
+                , Autocomplete.simpleOption "experimental"
+                , Autocomplete.simpleOption "release-candidate"
+                ]
+        }
+    ]
+
+
 get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make
@@ -114,37 +151,6 @@ Autocomplete.view
                   else
                     text "No items selected"
                 ]
-            , Autocomplete.view [ Autocomplete.placeholder "enter \"item\"" ]
-                { model = model.autocompleteModel1
-                , toMsg = AutoCompleteteMsg1
-                , options = Just options
-                }
-            , Autocomplete.view [ Autocomplete.placeholder "search something" ]
-                { model = model.autocompleteModel2
-                , toMsg = AutoCompleteteMsg2
-                , options = Nothing
-                }
-            , Autocomplete.view
-                [ Autocomplete.placeholder "Enter branch name..."
-                , Autocomplete.freshOption
-                    (\s ->
-                        [ text ""
-                        , text "Add `"
-                        , span [ class "font-medium text-gray-700" ] [ text s ]
-                        , text "`"
-                        ]
-                    )
-                ]
-                { model = model.autocompleteModel3
-                , toMsg = AutoCompleteteMsg3
-                , options =
-                    Just
-                        [ Autocomplete.simpleOption "main"
-                        , Autocomplete.simpleOption "dev"
-                        , Autocomplete.simpleOption "hotfix"
-                        , Autocomplete.simpleOption "experimental"
-                        , Autocomplete.simpleOption "release-candidate"
-                        ]
-                }
+            , div [ class "max-w-xs" ] (Section.spacerVert (view model))
             ]
         }
