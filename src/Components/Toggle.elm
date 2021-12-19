@@ -104,7 +104,7 @@ view flags attrs =
                 [ Attr.class """
                     absolute -translate-y-1/2 top-1/2
                     rounded-full h-4 w-4
-                    transition-all ease-out duration-200 
+                    transition-all duration-200 ease-custom
                     """
                 , Attr.class <|
                     if config.disabled then
