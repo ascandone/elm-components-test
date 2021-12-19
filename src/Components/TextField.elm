@@ -130,28 +130,44 @@ view attrs =
         [ div
             [ Attrs.class """
                 border rounded-md z-0
-                focus-within:shadow-md
+                focus-within:ring transition-all duration-200 ease-out
                 flex items-center
+                shadow-sm shadow-gray-100
             """
-            , Attrs.classList [ ( "opacity-70 cursor-not-allowed bg-gray-100", config.disabled ) ]
             , Attrs.class <|
-                case validationResult of
-                    Ok () ->
-                        "text-teal-900 border-teal-300 focus-within:border-teal-500 placeholder:text-teal-500"
+                if config.disabled then
+                    "opacity-80 bg-gray-50"
 
-                    Err _ ->
-                        "text-red-800 border-red-500 placeholder:text-red-300"
+                else
+                    case validationResult of
+                        Ok () ->
+                            """
+                            text-teal-900 ring-teal-200 border-teal-300
+                            hover:border-teal-400 focus-within:border-teal-400 placeholder:text-teal-500
+                            """
+
+                        Err _ ->
+                            """
+                            text-red-800 ring-red-200 border-red-300 hover:border-red-400
+                            placeholder:text-red-300
+                            """
             ]
             [ input
                 (List.append config.attributes
                     [ Attrs.type_ "text"
-                    , Attrs.class """
-                leading-none placeholder:font-light
-                px-4 py-4 w-full h-full rounded-md
-                outline-none bg-white
-                """
                     , Attrs.disabled config.disabled
                     , Attrs.value config.value
+                    , Attrs.class """
+                        leading-none placeholder:font-light
+                        px-4 py-4 w-full h-full rounded-md
+                        outline-none
+                    """
+                    , Attrs.class <|
+                        if config.disabled then
+                            "cursor-not-allowed"
+
+                        else
+                            "bg-white"
                     ]
                 )
                 []
