@@ -278,7 +278,7 @@ viewOption : { isSelected : Bool } -> Option -> Html Option
 viewOption { isSelected } option_ =
     div
         [ optionCommonCls
-        , Attrs.class "text-gray-800 font-medium"
+        , Attrs.class "text-gray-700"
         , Attrs.class <|
             if isSelected then
                 "bg-gray-100"
