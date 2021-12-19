@@ -93,12 +93,22 @@ viewChecked =
         ]
 
 
-view : List (Attribute msg) -> Html msg
-view attrs =
-    let
-        config =
-            makeConfig attrs
+viewInput : Config msg -> Html msg
+viewInput config =
+    input
+        (List.concat
+            [ Maybe.Extra.mapToList Attrs.checked config.checked
+            , Maybe.Extra.mapToList Html.Events.onCheck config.onCheck
+            , [ Attrs.class "hidden" ]
+            , config.attributes
+            ]
+        )
+        []
 
+
+viewButton : Config msg -> Html msg
+viewButton config =
+    let
         nextValue =
             case config.checked of
                 Just b ->
@@ -107,47 +117,47 @@ view attrs =
                 Nothing ->
                     True
     in
-    div []
-        [ input
-            (List.concat
-                [ Maybe.Extra.mapToList Attrs.checked config.checked
-                , Maybe.Extra.mapToList Html.Events.onCheck config.onCheck
-                , [ Attrs.class "hidden" ]
-                , config.attributes
-                ]
-            )
-            []
-        , button
-            (List.concat
-                [ Maybe.Extra.mapToList (\onCheck_ -> Html.Events.onClick (onCheck_ nextValue)) config.onCheck
-                , [ Attrs.class """
-                    rounded-md h-5 w-5 block
-                    shadow-sm box-border
-                    cursor-pointer hover:border-teal-400 hover:ring ring-teal-200
-                    flex items-center justify-center
-                    transition-color duration-200 ease-out
-                    """
-                  , Attrs.class <|
-                        case config.checked of
-                            Just True ->
-                                "bg-teal-600"
+    button
+        (List.concat
+            [ Maybe.Extra.mapToList (\onCheck_ -> Html.Events.onClick (onCheck_ nextValue)) config.onCheck
+            , [ Attrs.class """
+                                 rounded-md h-5 w-5 block shadow-sm box-border
+                                 cursor-pointer hover:border-teal-400 hover:ring ring-teal-200
+                                 flex items-center justify-center
+                                 transition-color duration-200 ease-out
+                                 """
+              , Attrs.class <|
+                    case config.checked of
+                        Just True ->
+                            "bg-teal-600"
 
-                            Just False ->
-                                "border border-gray-300"
+                        Just False ->
+                            "border border-gray-300"
 
-                            Nothing ->
-                                "border-[1.5px] border-teal-400 bg-teal-50"
-                  ]
-                ]
-            )
-            [ case config.checked of
-                Nothing ->
-                    viewIndeterminate
-
-                Just True ->
-                    viewChecked
-
-                Just False ->
-                    text ""
+                        Nothing ->
+                            "border-[1.5px] border-teal-400 bg-teal-50"
+              ]
             ]
+        )
+        [ case config.checked of
+            Nothing ->
+                viewIndeterminate
+
+            Just True ->
+                viewChecked
+
+            Just False ->
+                text ""
+        ]
+
+
+view : List (Attribute msg) -> Html msg
+view attrs =
+    let
+        config =
+            makeConfig attrs
+    in
+    div []
+        [ viewInput config
+        , viewButton config
         ]
