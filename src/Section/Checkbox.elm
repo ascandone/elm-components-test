@@ -37,7 +37,7 @@ update msg model =
 get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make
-        { title = "Checkbox"
+        { title = "Toggle"
         , example = """Toggle.view { checked = model.checked, onCheck = Checked }
     [ Toggle.id "toggle-id" ]
 
