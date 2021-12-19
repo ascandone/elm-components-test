@@ -9,6 +9,7 @@ module Components.Checkbox exposing
 import FeatherIcons
 import Html exposing (..)
 import Html.Attributes as Attrs
+import Html.Events
 import Utils
 
 
@@ -83,27 +84,45 @@ view attrs =
     let
         config =
             makeConfig attrs
+
+        nextValue =
+            case config.checked of
+                Just b ->
+                    not b
+
+                Nothing ->
+                    True
     in
     div []
         [ input [ Attrs.class "hidden" ] []
-        , div
-            [ Attrs.class """
-                rounded-md h-5 w-5 block
-                shadow-sm box-border
-                cursor-pointer hover:border-teal-400 hover:ring ring-teal-100
-                flex items-center justify-center
-                """
-            , Attrs.class <|
-                case config.checked of
-                    Just True ->
-                        "bg-teal-600"
-
-                    Just False ->
-                        "border"
-
+        , button
+            (List.concat
+                [ case config.onCheck of
                     Nothing ->
-                        "border-[1.5px] border-teal-400 bg-teal-50"
-            ]
+                        []
+
+                    Just onCheck_ ->
+                        [ Html.Events.onClick (onCheck_ nextValue) ]
+                , [ Attrs.class """
+                    rounded-md h-5 w-5 block
+                    shadow-sm box-border
+                    cursor-pointer hover:border-teal-400 hover:ring ring-teal-100
+                    flex items-center justify-center
+                    transition-color duration-200 ease-out
+                    """
+                  , Attrs.class <|
+                        case config.checked of
+                            Just True ->
+                                "bg-teal-600"
+
+                            Just False ->
+                                "border border-gray-300"
+
+                            Nothing ->
+                                "border-[1.5px] border-teal-400 bg-teal-50"
+                  ]
+                ]
+            )
             [ case config.checked of
                 Nothing ->
                     viewIndeterminate

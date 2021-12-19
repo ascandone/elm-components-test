@@ -18,7 +18,7 @@ type alias Model =
 
 init : Model
 init =
-    { checked = False
+    { checked = True
     }
 
 
@@ -36,7 +36,7 @@ update msg model =
 view : Model -> List (Html Msg)
 view model =
     [ Checkbox.view []
-    , Checkbox.view [ Checkbox.checked True ]
+    , Checkbox.view [ Checkbox.onCheck Checked, Checkbox.checked model.checked ]
     , Checkbox.view [ Checkbox.checked False ]
     ]
 
