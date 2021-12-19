@@ -1,11 +1,11 @@
-module Maybe.Extra exposing (toList)
+module Maybe.Extra exposing (mapToList)
 
 
-toList : Maybe a -> List a
-toList m =
+mapToList : (a -> b) -> Maybe a -> List b
+mapToList f m =
     case m of
         Nothing ->
             []
 
         Just x ->
-            [ x ]
+            [ f x ]

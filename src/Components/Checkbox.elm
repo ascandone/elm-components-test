@@ -2,6 +2,7 @@ module Components.Checkbox exposing
     ( Attribute
     , checked
     , checkedMaybe
+    , id
     , onCheck
     , view
     )
@@ -10,12 +11,14 @@ import FeatherIcons
 import Html exposing (..)
 import Html.Attributes as Attrs
 import Html.Events
+import Maybe.Extra
 import Utils
 
 
 type alias Config msg =
     { checked : Maybe Bool
     , onCheck : Maybe (Bool -> msg)
+    , attributes : List (Html.Attribute msg)
     }
 
 
@@ -23,6 +26,7 @@ defaultConfig : Config msg
 defaultConfig =
     { checked = Nothing
     , onCheck = Nothing
+    , attributes = []
     }
 
 
@@ -34,6 +38,16 @@ checkedMaybe mb =
 checked : Bool -> Attribute msg
 checked b =
     checkedMaybe (Just b)
+
+
+attribute : Html.Attribute msg -> Attribute msg
+attribute attr =
+    Attribute <| \c -> { c | attributes = attr :: c.attributes }
+
+
+id : String -> Attribute msg
+id =
+    attribute << Attrs.id
 
 
 onCheck : (Bool -> msg) -> Attribute msg
@@ -94,19 +108,22 @@ view attrs =
                     True
     in
     div []
-        [ input [ Attrs.class "hidden" ] []
+        [ input
+            (List.concat
+                [ Maybe.Extra.mapToList Attrs.checked config.checked
+                , Maybe.Extra.mapToList Html.Events.onCheck config.onCheck
+                , [ Attrs.class "hidden" ]
+                , config.attributes
+                ]
+            )
+            []
         , button
             (List.concat
-                [ case config.onCheck of
-                    Nothing ->
-                        []
-
-                    Just onCheck_ ->
-                        [ Html.Events.onClick (onCheck_ nextValue) ]
+                [ Maybe.Extra.mapToList (\onCheck_ -> Html.Events.onClick (onCheck_ nextValue)) config.onCheck
                 , [ Attrs.class """
                     rounded-md h-5 w-5 block
                     shadow-sm box-border
-                    cursor-pointer hover:border-teal-400 hover:ring ring-teal-100
+                    cursor-pointer hover:border-teal-400 hover:ring ring-teal-200
                     flex items-center justify-center
                     transition-color duration-200 ease-out
                     """
