@@ -12,6 +12,7 @@ import Section.ComplexForm
 import Section.FormField
 import Section.Switch
 import Section.TextField
+import Update
 
 
 main : Program () Model Msg
@@ -59,17 +60,30 @@ type Msg
     | FormFieldMsg Section.FormField.Msg
 
 
+updateFormField : Update.Nested Model Section.FormField.Model Msg Section.FormField.Msg
+updateFormField =
+    Update.nested
+        { getter = .formFieldModel
+        , setter = \m value -> { m | formFieldModel = value }
+        , wrapMsg = FormFieldMsg
+        }
+
+
+updateAutocomplete : Update.Nested Model Section.Autocomplete.Model Msg Section.Autocomplete.Msg
+updateAutocomplete =
+    Update.nested
+        { getter = .autocompleteModel
+        , setter = \m value -> { m | autocompleteModel = value }
+        , wrapMsg = AutocompleteMsg
+        }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         FormFieldMsg subMsg ->
-            let
-                ( newModel, cmd ) =
-                    Section.FormField.update subMsg model.formFieldModel
-            in
-            ( { model | formFieldModel = newModel }
-            , Cmd.map FormFieldMsg cmd
-            )
+            model
+                |> updateFormField (Section.FormField.update subMsg)
 
         SwitchMsg subMsg ->
             ( { model | switchModel = Section.Switch.update subMsg model.switchModel }
@@ -82,13 +96,8 @@ update msg model =
             )
 
         AutocompleteMsg subMsg ->
-            let
-                ( newModel, cmd ) =
-                    Section.Autocomplete.update subMsg model.autocompleteModel
-            in
-            ( { model | autocompleteModel = newModel }
-            , Cmd.map AutocompleteMsg cmd
-            )
+            model
+                |> updateAutocomplete (Section.Autocomplete.update subMsg)
 
         ActionBtnMsg subMsg ->
             ( { model | actionBtnModel = Section.ActionBtn.update subMsg model.actionBtnModel }
