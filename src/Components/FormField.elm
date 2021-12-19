@@ -1,13 +1,17 @@
 module Components.FormField exposing
     ( Attribute
     , Slot
+    , autoComplete
     , id
     , label
     , textField
+    , toggle
     , view
     )
 
+import Components.Autocomplete as Autocomplete
 import Components.TextField as TextField
+import Components.Toggle as Toggle
 import Html exposing (..)
 import Html.Attributes as Attrs
 import Utils
@@ -75,6 +79,53 @@ textField attrs =
     Slot <| \slots -> { slots | form = viewForm }
 
 
+autoComplete :
+    List (Autocomplete.Attribute Autocomplete.Msg)
+    ->
+        { model : Autocomplete.Model
+        , toMsg : Autocomplete.Msg -> msg
+        , options : Maybe (List Autocomplete.Option)
+        }
+    -> Slot msg
+autoComplete attrs autoCompleteArgs =
+    let
+        viewForm args =
+            Autocomplete.view
+                (List.append
+                    attrs
+                    (case args.id of
+                        Nothing ->
+                            []
+
+                        Just id_ ->
+                            [ Autocomplete.id id_ ]
+                    )
+                )
+                autoCompleteArgs
+    in
+    Slot <| \slots -> { slots | form = viewForm }
+
+
+toggle : { checked : Bool, onCheck : Bool -> msg } -> List (Toggle.Attribute msg) -> Slot msg
+toggle args attrs =
+    let
+        viewForm formArgs =
+            div []
+                [ Toggle.view args <|
+                    List.append
+                        attrs
+                        (case formArgs.id of
+                            Nothing ->
+                                []
+
+                            Just id_ ->
+                                [ Toggle.id id_ ]
+                        )
+                ]
+    in
+    Slot <| \slots -> { slots | form = viewForm }
+
+
 makeAttrsConfig : List (Attribute msg) -> Config msg
 makeAttrsConfig =
     Utils.getMakeConfig
@@ -103,7 +154,7 @@ view attrs slots =
     div
         [ Attrs.class """
             md:flex items-center
-            px-2 py-5 rounded-md md:hover:bg-stone-50
+            px-2 py-4 rounded-md md:hover:bg-stone-50
             transition-color duration-300
             """
         ]

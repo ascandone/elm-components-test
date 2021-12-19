@@ -1,4 +1,4 @@
-module Components.Toggle exposing (disabled, error, id, view)
+module Components.Toggle exposing (Attribute, disabled, error, id, view)
 
 import Html exposing (..)
 import Html.Attributes as Attr

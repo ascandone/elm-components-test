@@ -151,6 +151,7 @@ view attrs =
                 outline-none bg-white
                 """
                     , Attrs.disabled config.disabled
+                    , Attrs.value config.value
                     ]
                 )
                 []

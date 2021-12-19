@@ -6,6 +6,7 @@ module Components.Autocomplete exposing
     , freshOption
     , getSelected
     , getValue
+    , id
     , init
     , option
     , placeholder
@@ -53,6 +54,11 @@ textFieldAttribute attr_ =
     Attribute <| \c -> { c | textFieldAttributes = attr_ :: c.textFieldAttributes }
 
 
+id : String -> Attribute msg
+id =
+    textFieldAttribute << TextField.id
+
+
 placeholder : String -> Attribute msg
 placeholder =
     textFieldAttribute << TextField.placeholder
@@ -75,9 +81,9 @@ option =
 {-| when id happens to be the label
 -}
 simpleOption : String -> Option
-simpleOption id =
-    { label = id
-    , id = id
+simpleOption id_ =
+    { label = id_
+    , id = id_
     }
 
 
