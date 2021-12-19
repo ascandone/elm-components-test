@@ -4,6 +4,7 @@ module Components.TextField exposing
     , autofocus
     , disabled
     , icon
+    , id
     , onBlur
     , onFocus
     , onInput
@@ -23,18 +24,20 @@ import Utils
 
 type alias Config msg =
     { attributes : List (Html.Attribute msg)
-    , validation : Result String ()
+    , validation : String -> Result String ()
     , icon : Maybe (Html msg)
     , disabled : Bool
+    , value : String
     }
 
 
 defaultConfig : Config msg
 defaultConfig =
     { attributes = []
-    , validation = Ok ()
+    , validation = \_ -> Ok ()
     , icon = Nothing
     , disabled = False
+    , value = ""
     }
 
 
@@ -55,6 +58,11 @@ attribute attr =
     Attribute <| \c -> { c | attributes = attr :: c.attributes }
 
 
+id : String -> Attribute msg
+id =
+    attribute << Attrs.id
+
+
 onInput : (String -> msg) -> Attribute msg
 onInput =
     attribute << Html.Events.onInput
@@ -71,8 +79,8 @@ onBlur =
 
 
 value : String -> Attribute msg
-value =
-    attribute << Attrs.value
+value str =
+    Attribute <| \c -> { c | value = str }
 
 
 placeholder : String -> Attribute msg
@@ -90,9 +98,9 @@ autofocus =
     attribute << Attrs.autofocus
 
 
-validation : Result String x -> Attribute msg
-validation result =
-    Attribute <| \c -> { c | validation = result |> Result.map (\_ -> ()) }
+validation : (String -> Result String x) -> Attribute msg
+validation validate =
+    Attribute <| \c -> { c | validation = validate >> Result.map (\_ -> ()) }
 
 
 icon : FeatherIcons.Icon -> Attribute msg
@@ -114,17 +122,20 @@ view attrs =
     let
         config =
             getConfig attrs
+
+        validationResult =
+            config.validation config.value
     in
     div []
         [ div
             [ Attrs.class """
-                w-64 border rounded-md z-0
+                border rounded-md z-0
                 focus-within:shadow-md
                 flex items-center
             """
             , Attrs.classList [ ( "opacity-70 cursor-not-allowed bg-gray-100", config.disabled ) ]
             , Attrs.class <|
-                case config.validation of
+                case validationResult of
                     Ok () ->
                         "text-teal-900 border-teal-300 focus-within:border-teal-500 placeholder:text-teal-500"
 
@@ -137,7 +148,7 @@ view attrs =
                     , Attrs.class """
                 leading-none placeholder:font-light
                 px-4 py-4 w-full h-full rounded-md
-                outline-none bg-transparent
+                outline-none bg-white
                 """
                     , Attrs.disabled config.disabled
                     ]
@@ -151,7 +162,7 @@ view attrs =
                     span [ Attrs.class "mr-2 " ]
                         [ html ]
             ]
-        , case config.validation of
+        , case validationResult of
             Ok () ->
                 text ""
 

@@ -6,6 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (class)
 import Json.Encode as Enc exposing (Value)
 import Section
+import Validation exposing (Validation)
 
 
 type alias Parser input output =
@@ -22,7 +23,7 @@ parseData : Parser Form Data
 parseData model =
     Result.map2 Data
         (parseSlugField model.slugField)
-        (parseNumberField model.numberField)
+        (parseNumberField model.numberField.value)
 
 
 strContainsNumber : String -> Bool
@@ -54,7 +55,7 @@ parseNumberField number =
 
 type alias Form =
     { slugField : String
-    , numberField : String
+    , numberField : Validation Int
     }
 
 
@@ -68,7 +69,7 @@ init : Model
 init =
     { form =
         { slugField = ""
-        , numberField = ""
+        , numberField = Validation.init
         }
     , submittedValue = Nothing
     }
@@ -76,7 +77,7 @@ init =
 
 type Msg
     = InputSlug String
-    | InputNumber String
+    | InputNumber (Validation Int)
     | Blur
     | SubmitData Data
 
@@ -95,8 +96,8 @@ update msg model =
         InputSlug value ->
             updateForm model <| \form -> { form | slugField = String.replace " " "-" value }
 
-        InputNumber value ->
-            updateForm model <| \form -> { form | numberField = value }
+        InputNumber validation ->
+            updateForm model <| \form -> { form | numberField = validation }
 
         SubmitData data ->
             { model | submittedValue = Just data }
@@ -109,14 +110,15 @@ viewForm form =
             [ TextField.placeholder "Enter a slug"
             , TextField.value form.slugField
             , TextField.onInput InputSlug
-            , TextField.validation (parseSlugField form.slugField)
+            , TextField.validation parseSlugField
             ]
-        , TextField.view
-            [ TextField.placeholder "Enter a number"
-            , TextField.value form.numberField
-            , TextField.onInput InputNumber
-            , TextField.validation (parseNumberField form.numberField)
-            ]
+        , Html.map InputNumber <|
+            TextField.view
+                (List.append
+                    (Validation.attributes form.numberField)
+                    [ TextField.placeholder "Enter a number"
+                    ]
+                )
         , Button.primary
             [ Button.ifValidated (parseData form) Button.onClick SubmitData
             ]

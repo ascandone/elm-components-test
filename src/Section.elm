@@ -1,6 +1,7 @@
 module Section exposing
     ( Section
     , make
+    , spacerContainer
     , static
     , viewSections
     )

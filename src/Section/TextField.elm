@@ -46,6 +46,41 @@ validateEmail mail =
             Err "Invalid email"
 
 
+view : Model -> List (Html Msg)
+view model =
+    [ TextField.view
+        [ TextField.value model.textField
+        , TextField.onInput Input
+        , TextField.validation validateEmail
+        , TextField.placeholder "example@gmail.com"
+        ]
+    , TextField.view
+        [ TextField.value ""
+        , TextField.placeholder "example@gmail.com"
+        ]
+    , TextField.view
+        [ TextField.value ""
+        , TextField.validation (\_ -> Err "Inserisci una mail valida")
+        , TextField.placeholder "example@gmail.com"
+        ]
+    , TextField.view
+        [ TextField.value ""
+        , TextField.placeholder "example@gmail.com"
+        , TextField.disabled True
+        ]
+    , TextField.view
+        [ TextField.value ""
+        , TextField.placeholder "example@gmail.com"
+        , TextField.icon FeatherIcons.user
+        ]
+    , TextField.view
+        [ TextField.value ""
+        , TextField.placeholder "example@gmail.com"
+        , TextField.actionIcon [ ActionButton.size ActionButton.sm ] FeatherIcons.x
+        ]
+    ]
+
+
 get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make
@@ -61,35 +96,6 @@ get model =
 """
         , children =
             [ pre [ class "overflow-auto" ] [ text ("model.textField = " ++ model.textField) ]
-            , TextField.view
-                [ TextField.value model.textField
-                , TextField.onInput Input
-                , TextField.validation (validateEmail model.textField)
-                , TextField.placeholder "example@gmail.com"
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.validation (Err "Inserisci una mail valida")
-                , TextField.placeholder "example@gmail.com"
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                , TextField.disabled True
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                , TextField.icon FeatherIcons.user
-                ]
-            , TextField.view
-                [ TextField.value ""
-                , TextField.placeholder "example@gmail.com"
-                , TextField.actionIcon [ ActionButton.size ActionButton.sm ] FeatherIcons.x
-                ]
+            , div [ class "max-w-sm" ] [ Section.spacerContainer (view model) ]
             ]
         }
