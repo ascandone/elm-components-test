@@ -1,4 +1,4 @@
-module Section.Checkbox exposing
+module Section.Toggle exposing
     ( Model
     , Msg
     , get

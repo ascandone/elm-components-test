@@ -7,11 +7,11 @@ import Section.ActionBtn
 import Section.Autocomplete
 import Section.Button
 import Section.Card
-import Section.Checkbox
 import Section.ComplexForm
 import Section.FormField
 import Section.Switch
 import Section.TextField
+import Section.Toggle
 import Update
 
 
@@ -30,7 +30,7 @@ type alias Model =
     , switchModel : Section.Switch.Model
     , autocompleteModel : Section.Autocomplete.Model
     , actionBtnModel : Section.ActionBtn.Model
-    , checkBoxModel : Section.Checkbox.Model
+    , toggleBoxModel : Section.Toggle.Model
     , complexFormModel : Section.ComplexForm.Model
     , formFieldModel : Section.FormField.Model
     }
@@ -39,7 +39,7 @@ type alias Model =
 init : ( Model, Cmd Msg )
 init =
     ( { textFieldModel = Section.TextField.init
-      , checkBoxModel = Section.Checkbox.init
+      , toggleBoxModel = Section.Toggle.init
       , switchModel = Section.Switch.init
       , autocompleteModel = Section.Autocomplete.init
       , actionBtnModel = Section.ActionBtn.init
@@ -53,7 +53,7 @@ init =
 type Msg
     = TextFieldMsg Section.TextField.Msg
     | SwitchMsg Section.Switch.Msg
-    | CheckedMsg Section.Checkbox.Msg
+    | CheckedMsg Section.Toggle.Msg
     | AutocompleteMsg Section.Autocomplete.Msg
     | ActionBtnMsg Section.ActionBtn.Msg
     | ComplexFormMsg Section.ComplexForm.Msg
@@ -105,7 +105,7 @@ update msg model =
             )
 
         CheckedMsg subMsg ->
-            ( { model | checkBoxModel = Section.Checkbox.update subMsg model.checkBoxModel }
+            ( { model | toggleBoxModel = Section.Toggle.update subMsg model.toggleBoxModel }
             , Cmd.none
             )
 
@@ -123,7 +123,7 @@ view model =
         , Section.TextField.get model.textFieldModel TextFieldMsg
         , Section.Autocomplete.get model.autocompleteModel AutocompleteMsg
         , Section.Switch.get model.switchModel SwitchMsg
-        , Section.Checkbox.get model.checkBoxModel CheckedMsg
+        , Section.Toggle.get model.toggleBoxModel CheckedMsg
         , Section.Card.get
         , Section.FormField.get model.formFieldModel FormFieldMsg
 
