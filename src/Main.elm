@@ -7,6 +7,7 @@ import Section.ActionBtn
 import Section.Autocomplete
 import Section.Button
 import Section.Card
+import Section.Checkbox
 import Section.ComplexForm
 import Section.FormField
 import Section.Switch
@@ -33,6 +34,7 @@ type alias Model =
     , toggleBoxModel : Section.Toggle.Model
     , complexFormModel : Section.ComplexForm.Model
     , formFieldModel : Section.FormField.Model
+    , checkBoxModel : Section.Checkbox.Model
     }
 
 
@@ -45,6 +47,7 @@ init =
       , actionBtnModel = Section.ActionBtn.init
       , complexFormModel = Section.ComplexForm.init
       , formFieldModel = Section.FormField.init
+      , checkBoxModel = Section.Checkbox.init
       }
     , Cmd.none
     )
@@ -58,6 +61,7 @@ type Msg
     | ActionBtnMsg Section.ActionBtn.Msg
     | ComplexFormMsg Section.ComplexForm.Msg
     | FormFieldMsg Section.FormField.Msg
+    | CheckboxMsg Section.Checkbox.Msg
 
 
 updateFormField : Update.Nested Model Section.FormField.Model Msg Section.FormField.Msg
@@ -81,6 +85,11 @@ updateAutocomplete =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        CheckboxMsg subMsg ->
+            ( { model | checkBoxModel = Section.Checkbox.update subMsg model.checkBoxModel }
+            , Cmd.none
+            )
+
         FormFieldMsg subMsg ->
             model
                 |> updateFormField (Section.FormField.update subMsg)
@@ -124,8 +133,9 @@ view model =
         , Section.Autocomplete.get model.autocompleteModel AutocompleteMsg
         , Section.Switch.get model.switchModel SwitchMsg
         , Section.Toggle.get model.toggleBoxModel CheckedMsg
-        , Section.Card.get
+        , Section.Checkbox.get model.checkBoxModel CheckboxMsg
         , Section.FormField.get model.formFieldModel FormFieldMsg
+        , Section.Card.get
 
         --, Section.ComplexForm.get model.complexFormModel ComplexFormMsg
         ]
