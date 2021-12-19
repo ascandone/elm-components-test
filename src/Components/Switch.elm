@@ -39,27 +39,31 @@ getLeftAttribute args items =
     Attrs.style "left" (String.fromFloat leftValue ++ "%")
 
 
+viewSlidingIndicator : Attribute msg -> Html msg
+viewSlidingIndicator leftAttribute =
+    span
+        [ Attrs.class """
+            absolute px-2 h-9 z-0 -translate-y-1/2 top-1/2 w-1/3
+            transition-position duration-200 ease-out
+            """
+        , leftAttribute
+        ]
+        [ span
+            [ Attrs.class """
+               block h-full w-full
+               rounded-full bg-white shadow __
+               """
+            ]
+            []
+        ]
+
+
 view : { selected : a, onSelected : a -> msg } -> List (Item a) -> Html msg
 view args items =
-    div [ Attrs.class "relative px-2 h-12 max-w-xl rounded-full bg-gray-200" ]
+    div [ Attrs.class "relative px-2 h-12 max-w-xl rounded-full bg-zinc-100" ]
         [ Html.map args.onSelected <|
             div [ Attrs.class "flex h-full" ] (items |> List.map (viewItem args))
-        , span
-            [ Attrs.class """
-                absolute px-2 h-9 z-0 -translate-y-1/2 top-1/2 w-1/3
-                transition-position duration-200 ease-out
-                """
-            , getLeftAttribute args items
-            ]
-            [ span
-                [ Attrs.class """
-
-            block h-full w-full
-            rounded-full bg-white shadow-lg
-            """
-                ]
-                []
-            ]
+        , viewSlidingIndicator (getLeftAttribute args items)
         ]
 
 
