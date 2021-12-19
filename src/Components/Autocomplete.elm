@@ -130,7 +130,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Focused ->
-            ( { model | focused = True }
+            ( { model | focused = True, selected = False, value = "" }
             , Cmd.none
             )
 
