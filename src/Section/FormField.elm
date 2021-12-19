@@ -4,6 +4,7 @@ import Components.Autocomplete as Autocomplete
 import Components.FormField as FormField
 import Components.TextField as TextField
 import Html exposing (..)
+import Html.Attributes as Attrs
 import Section
 
 
@@ -53,7 +54,7 @@ update msg model =
 
 view : Model -> List (Html Msg)
 view model =
-    [ div []
+    [ div [ Attrs.class "mb-32" ]
         [ FormField.view [ FormField.id "user-email" ]
             [ FormField.label "Email"
             , FormField.textField
@@ -66,7 +67,7 @@ view model =
             [ FormField.label "Flag"
             , FormField.toggle { checked = model.flag, onCheck = Toggle } []
             ]
-        , FormField.view [ FormField.id "user-flag" ]
+        , FormField.view [ FormField.id "cap" ]
             [ FormField.label "Cap"
             , FormField.autoComplete [ Autocomplete.placeholder "00123" ]
                 { model = model.cap
