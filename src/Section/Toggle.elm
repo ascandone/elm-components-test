@@ -6,6 +6,7 @@ module Section.Toggle exposing
     , update
     )
 
+import Components.Label as Label
 import Components.Toggle as Toggle
 import Html exposing (..)
 import Html.Attributes exposing (class)
@@ -63,20 +64,19 @@ Toggle.view { checked = model.checked, onCheck = Checked }
               pre [ class "overflow-auto" ]
                 [ text ("model.checked = " ++ bStr)
                 ]
-            , div []
-                [ Toggle.view { checked = model.flag, onCheck = Checked }
-                    [ Toggle.id "flag" ]
-                , label [ Html.Attributes.for "flag", class "px-4" ] [ text "checkbox label" ]
+            , label [ Label.class ]
+                [ Toggle.view { checked = model.flag, onCheck = Checked } []
+                , text "Regular"
                 ]
-            , div []
+            , label [ Label.class ]
                 [ Toggle.view { checked = model.flag, onCheck = Checked }
-                    [ Toggle.id "flag2", Toggle.error True ]
-                , label [ Html.Attributes.for "flag2", class "px-4" ] [ text "checkbox label" ]
+                    [ Toggle.error True ]
+                , text "Error state"
                 ]
-            , div []
+            , label [ Label.class ]
                 [ Toggle.view { checked = model.flag, onCheck = Checked }
-                    [ Toggle.id "flag3", Toggle.disabled True ]
-                , label [ Html.Attributes.for "flag3", class "px-4" ] [ text "checkbox label" ]
+                    [ Toggle.disabled True ]
+                , text "Disabled"
                 ]
             ]
         }
