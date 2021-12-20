@@ -38,8 +38,8 @@ get =
             """
         , children =
             [ div [ class "max-w-sm" ]
-                [ Card.raised [ Card.dataTestId "lizard-card" ]
-                    [ Card.media [] { src = src }
+                [ Card.raised [ Card.dataTestId "lizard-card", Card.class "test-class" ]
+                    [ Card.media [ Card.dataTestId "lizard-media", Card.size 12 ] { src = src }
                     , Card.body
                         [ h2 [ class "font-semibold text-xl" ] [ text "Lizard" ]
                         , p [ class "text-gray-600" ]

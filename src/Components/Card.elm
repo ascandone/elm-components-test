@@ -9,6 +9,7 @@ module Components.Card exposing
     , media
     , outline
     , raised
+    , size
     )
 
 import Html exposing (..)
@@ -54,12 +55,17 @@ type Variant
     | Outline
 
 
-dataTestId : String -> Attribute { r | media : (), card : () } msg
+dataTestId : String -> Attribute x msg
 dataTestId _ =
     Attribute (\_ c -> c)
 
 
-class : String -> Attribute { r | card : () } msg
+size : Float -> Attribute MediaCtx msg
+size _ =
+    Attribute <| \_ c -> c
+
+
+class : String -> Attribute CardCtx msg
 class _ =
     Attribute (\_ c -> c)
 
@@ -68,7 +74,15 @@ type Slot msg
     = Slot (Config msg -> Config msg)
 
 
-media : List (Attribute { r | media : () } msg) -> { src : String } -> Slot msg
+type MediaCtx
+    = MediaCtx
+
+
+type CardCtx
+    = CardCtx
+
+
+media : List (Attribute MediaCtx msg) -> { src : String } -> Slot msg
 media attrs args =
     Slot <|
         \config ->
@@ -89,17 +103,17 @@ actions children =
     Slot <| \config -> { config | actions = children }
 
 
-raised : List (Attribute { r | card : () } msg) -> List (Slot msg) -> Html msg
+raised : List (Attribute CardCtx msg) -> List (Slot msg) -> Html msg
 raised =
     view Raised
 
 
-outline : List (Attribute { r | card : () } msg) -> List (Slot msg) -> Html msg
+outline : List (Attribute CardCtx msg) -> List (Slot msg) -> Html msg
 outline =
     view Outline
 
 
-view : Variant -> List (Attribute { r | card : () } msg) -> List (Slot msg) -> Html msg
+view : Variant -> List (Attribute CardCtx msg) -> List (Slot msg) -> Html msg
 view variant attributes slots =
     let
         cardAttributes =
