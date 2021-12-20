@@ -6,6 +6,7 @@ module Section.Checkbox exposing
     , update
     )
 
+import Components.Button as Button
 import Components.Checkbox as Checkbox
 import Components.Label as Label
 import Html exposing (..)
@@ -29,7 +30,8 @@ init =
 
 
 type Msg
-    = Checked1 Bool
+    = Reset
+    | Checked1 Bool
     | Checked2 Bool
     | Checked3 Bool
 
@@ -37,6 +39,9 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
+        Reset ->
+            init
+
         Checked1 b ->
             { model | check1 = Just b }
 
@@ -49,7 +54,8 @@ update msg model =
 
 view : Model -> List (Html Msg)
 view model =
-    [ label [ Label.class, Html.Attributes.for "check-1" ]
+    [ Button.ghost [ Button.size Button.sm, Button.onClick Reset ] "Reset"
+    , label [ Label.class, Html.Attributes.for "check-1" ]
         [ Checkbox.view
             [ Checkbox.id "check-1"
             , Checkbox.onCheck Checked1

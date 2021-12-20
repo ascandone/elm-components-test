@@ -6,6 +6,7 @@ module Section.Radio exposing
     , update
     )
 
+import Components.Button as Button
 import Components.Label as Label
 import Components.Radio as Radio
 import Html exposing (..)
@@ -40,12 +41,16 @@ init =
 
 
 type Msg
-    = Input Option
+    = Reset
+    | Input Option
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
+        Reset ->
+            init
+
         Input opt ->
             { model | value = Just opt }
 
@@ -59,7 +64,8 @@ view model =
             |> text
         ]
     , div [ class "space-y-3" ]
-        [ label
+        [ Button.ghost [ Button.size Button.sm, Button.onClick Reset ] "Reset"
+        , label
             [ Label.class
             , Html.Attributes.for "option-1"
             , class "group"
