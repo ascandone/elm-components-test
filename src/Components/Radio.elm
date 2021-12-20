@@ -1,13 +1,16 @@
 module Components.Radio exposing
     ( Attribute
-    , checked
     , id
-    , value
+    , name
+    , onInput
+    , selectedValue
     , view
     )
 
 import Html exposing (..)
 import Html.Attributes as Attrs
+import Html.Events
+import Maybe.Extra
 import Utils
 
 
@@ -20,9 +23,14 @@ attribute attr =
     Attribute <| \c -> { c | attributes = attr :: c.attributes }
 
 
-value : String -> Attribute msg
-value =
-    attribute << Attrs.value
+onInput : (String -> msg) -> Attribute msg
+onInput onInput_ =
+    Attribute <| \c -> { c | onInput = Just onInput_ }
+
+
+selectedValue : Maybe String -> Attribute msg
+selectedValue value_ =
+    Attribute <| \c -> { c | selectedValue = value_ }
 
 
 id : String -> Attribute msg
@@ -30,21 +38,23 @@ id =
     attribute << Attrs.id
 
 
-checked : Bool -> Attribute msg
-checked b =
-    Attribute <| \c -> { c | checked = b }
+name : String -> Attribute msg
+name =
+    attribute << Attrs.name
 
 
 type alias Config msg =
     { attributes : List (Html.Attribute msg)
-    , checked : Bool
+    , selectedValue : Maybe String
+    , onInput : Maybe (String -> msg)
     }
 
 
 defaultConfig : Config msg
 defaultConfig =
     { attributes = []
-    , checked = False
+    , selectedValue = Nothing
+    , onInput = Nothing
     }
 
 
@@ -56,52 +66,66 @@ makeConfig =
         }
 
 
-viewRadio : Config msg -> Html msg
-viewRadio config =
+viewRadio : Config msg -> String -> Html msg
+viewRadio config value_ =
     Utils.concatArgs input
         [ config.attributes
-        , [ Attrs.checked config.checked
-          , Attrs.class "hidden"
+        , Maybe.Extra.mapToList Html.Events.onInput config.onInput
+        , [ Attrs.class "hidden"
           , Attrs.type_ "radio"
+          , Attrs.value value_
+          , Attrs.checked (config.selectedValue == Just value_)
           ]
         ]
         []
 
 
-viewFakeRadio : Config msg -> Html msg
-viewFakeRadio config =
-    button
-        [ Attrs.class """
-            w-5 h-5 rounded-full box-border shadow-sm
-            flex items-center justify-center cursor-pointer
-        """
+viewInnerCircle : Bool -> Html msg
+viewInnerCircle checked =
+    div
+        [ Attrs.class "bg-white rounded-full shadow-sm shadow-gray-500"
         , Attrs.class <|
-            if config.checked then
-                "bg-teal-600"
+            if checked then
+                "w-2 h-2"
 
             else
-                "border border-gray-200"
+                "w-0 h-0"
         ]
-        [ div
-            [ Attrs.class " bg-white rounded-full shadow-sm shadow-gray-500"
-            , Attrs.class <|
-                if config.checked then
-                    "w-2 h-2"
+        []
+
+
+viewFakeRadio : Config msg -> String -> Html msg
+viewFakeRadio config value_ =
+    let
+        checked =
+            config.selectedValue == Just value_
+    in
+    Utils.concatArgs button
+        [ Maybe.Extra.mapToList (\onInput_ -> Html.Events.onClick (onInput_ value_)) config.onInput
+        , [ Attrs.class """
+            w-5 h-5 rounded-full box-border shadow-sm
+            flex items-center justify-center
+            cursor-pointer hover:ring ring-teal-200
+        """
+          , Attrs.class <|
+                if checked then
+                    "bg-teal-600"
 
                 else
-                    "w-0 h-0"
-            ]
-            []
+                    "border border-gray-300 hover:border-teal-500"
+          ]
+        ]
+        [ viewInnerCircle checked
         ]
 
 
-view : List (Attribute msg) -> Html msg
-view attrs =
+view : List (Attribute msg) -> String -> Html msg
+view attrs value_ =
     let
         config =
             makeConfig attrs
     in
     div []
-        [ viewRadio config
-        , viewFakeRadio config
+        [ viewRadio config value_
+        , viewFakeRadio config value_
         ]

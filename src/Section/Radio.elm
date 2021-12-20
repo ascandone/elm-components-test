@@ -7,17 +7,21 @@ module Section.Radio exposing
     )
 
 import Components.Radio as Radio
-import Html exposing (Html)
+import Html exposing (..)
+import Html.Attributes exposing (class)
+import Html.Events
 import Section
 
 
 type alias Model =
-    {}
+    { value : Maybe String
+    }
 
 
 init : Model
 init =
-    {}
+    { value = Nothing
+    }
 
 
 type Msg
@@ -27,14 +31,38 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Input _ ->
-            model
+        Input str ->
+            { model | value = Just str }
+
+
+labelClass : Html.Attribute msg
+labelClass =
+    class "flex items-center gap-x-3 text-gray-800 select-none"
 
 
 view : Model -> List (Html Msg)
 view model =
-    [ Radio.view [ Radio.checked True ]
-    , Radio.view [ Radio.checked False ]
+    [ pre [] [ text (Maybe.withDefault "(no option selected)" model.value) ]
+    , div [ class "space-y-3" ]
+        [ label [ labelClass, Html.Attributes.for "option-1" ]
+            [ Radio.view
+                [ Radio.onInput Input
+                , Radio.selectedValue model.value
+                , Radio.id "option-1"
+                ]
+                "value-1"
+            , text "First option"
+            ]
+        , label [ labelClass, Html.Attributes.for "option-2" ]
+            [ Radio.view
+                [ Radio.onInput Input
+                , Radio.selectedValue model.value
+                , Radio.id "option-2"
+                ]
+                "value-2"
+            , text "Second option"
+            ]
+        ]
     ]
 
 
