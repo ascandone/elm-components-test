@@ -11,6 +11,7 @@ import FeatherIcons
 import Html exposing (..)
 import Html.Attributes as Attrs
 import Html.Events
+import Json.Encode
 import Maybe.Extra
 import Utils
 
@@ -99,7 +100,10 @@ viewInput config =
         (List.concat
             [ Maybe.Extra.mapToList Attrs.checked config.checked
             , Maybe.Extra.mapToList Html.Events.onCheck config.onCheck
-            , [ Attrs.class "hidden" ]
+            , [ Attrs.class "hidden"
+              , Attrs.type_ "checkbox"
+              , Attrs.property "indeterminate" <| Json.Encode.bool (config.checked == Nothing)
+              ]
             , config.attributes
             ]
         )

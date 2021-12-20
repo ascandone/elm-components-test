@@ -8,36 +8,76 @@ module Section.Checkbox exposing
 
 import Components.Checkbox as Checkbox
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Section
 
 
 type alias Model =
-    { checked : Bool
+    { check1 : Maybe Bool
+    , check2 : Bool
+    , check3 : Bool
     }
 
 
 init : Model
 init =
-    { checked = True
+    { check1 = Nothing
+    , check2 = False
+    , check3 = True
     }
 
 
 type Msg
-    = Checked Bool
+    = Checked1 Bool
+    | Checked2 Bool
+    | Checked3 Bool
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Checked b ->
-            { model | checked = b }
+        Checked1 b ->
+            { model | check1 = Just b }
+
+        Checked2 b ->
+            { model | check2 = b }
+
+        Checked3 b ->
+            { model | check3 = b }
+
+
+labelClass : Attribute msg
+labelClass =
+    class "flex items-center gap-x-3 text-gray-800 select-none"
 
 
 view : Model -> List (Html Msg)
 view model =
-    [ Checkbox.view []
-    , Checkbox.view [ Checkbox.onCheck Checked, Checkbox.checked model.checked ]
-    , Checkbox.view [ Checkbox.checked False ]
+    [ label [ labelClass, Html.Attributes.for "check-1" ]
+        [ Checkbox.view
+            [ Checkbox.id "check-1"
+            , Checkbox.onCheck Checked1
+            , Checkbox.checkedMaybe model.check1
+            ]
+        , text "Indeterminate"
+        ]
+    , label [ labelClass, Html.Attributes.for "check-2" ]
+        [ Checkbox.view
+            [ Checkbox.checked model.check2
+            , Checkbox.onCheck Checked2
+            , Checkbox.id "check-2"
+            ]
+        , text "Unchecked"
+        ]
+    , label [ labelClass, Html.Attributes.for "check-3" ]
+        [ Checkbox.view
+            [ Checkbox.id "check-3"
+            , Checkbox.checked model.check3
+            , Checkbox.onCheck Checked3
+            , Checkbox.id "check-3"
+            ]
+        , text "Checked"
+        ]
     ]
 
 
