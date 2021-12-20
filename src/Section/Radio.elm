@@ -93,7 +93,17 @@ get : Model -> (Msg -> msg) -> Section.Section msg
 get model =
     Section.make
         { title = "Radio"
-        , example = """TODO
+        , example = """Radio.generic
+    [ Radio.selectedValue model.value
+    , Radio.onInput Input
+    ]
+    ( "option-a", Option.A )
+
+Radio.generic
+    [ Radio.selectedValue model.value
+    , Radio.onInput Input
+    ]
+    ( "option-v", Option.B )
 """
         , children = view model
         }
