@@ -10,6 +10,7 @@ import Section.Card
 import Section.Checkbox
 import Section.ComplexForm
 import Section.FormField
+import Section.Radio
 import Section.Switch
 import Section.TextField
 import Section.Toggle
@@ -35,6 +36,7 @@ type alias Model =
     , complexFormModel : Section.ComplexForm.Model
     , formFieldModel : Section.FormField.Model
     , checkBoxModel : Section.Checkbox.Model
+    , radioModel : Section.Radio.Model
     }
 
 
@@ -48,6 +50,7 @@ init =
       , complexFormModel = Section.ComplexForm.init
       , formFieldModel = Section.FormField.init
       , checkBoxModel = Section.Checkbox.init
+      , radioModel = Section.Radio.init
       }
     , Cmd.none
     )
@@ -62,6 +65,7 @@ type Msg
     | ComplexFormMsg Section.ComplexForm.Msg
     | FormFieldMsg Section.FormField.Msg
     | CheckboxMsg Section.Checkbox.Msg
+    | RadioMsg Section.Radio.Msg
 
 
 updateFormField : Update.Nested Model Section.FormField.Model Msg Section.FormField.Msg
@@ -85,6 +89,11 @@ updateAutocomplete =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        RadioMsg subMsg ->
+            ( { model | radioModel = Section.Radio.update subMsg model.radioModel }
+            , Cmd.none
+            )
+
         CheckboxMsg subMsg ->
             ( { model | checkBoxModel = Section.Checkbox.update subMsg model.checkBoxModel }
             , Cmd.none
@@ -134,6 +143,7 @@ view model =
         , Section.Switch.get model.switchModel SwitchMsg
         , Section.Toggle.get model.toggleBoxModel CheckedMsg
         , Section.Checkbox.get model.checkBoxModel CheckboxMsg
+        , Section.Radio.get model.radioModel RadioMsg
         , Section.FormField.get model.formFieldModel FormFieldMsg
         , Section.Card.get
 
