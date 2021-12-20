@@ -96,17 +96,15 @@ viewChecked =
 
 viewInput : Config msg -> Html msg
 viewInput config =
-    input
-        (List.concat
-            [ Maybe.Extra.mapToList Attrs.checked config.checked
-            , Maybe.Extra.mapToList Html.Events.onCheck config.onCheck
-            , [ Attrs.class "hidden"
-              , Attrs.type_ "checkbox"
-              , Attrs.property "indeterminate" <| Json.Encode.bool (config.checked == Nothing)
-              ]
-            , config.attributes
-            ]
-        )
+    Utils.concatArgs input
+        [ Maybe.Extra.mapToList Attrs.checked config.checked
+        , Maybe.Extra.mapToList Html.Events.onCheck config.onCheck
+        , [ Attrs.class "hidden"
+          , Attrs.type_ "checkbox"
+          , Attrs.property "indeterminate" <| Json.Encode.bool (config.checked == Nothing)
+          ]
+        , config.attributes
+        ]
         []
 
 

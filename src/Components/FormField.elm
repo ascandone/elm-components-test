@@ -14,6 +14,7 @@ import Components.TextField as TextField
 import Components.Toggle as Toggle
 import Html exposing (..)
 import Html.Attributes as Attrs
+import Maybe.Extra
 import Utils
 
 
@@ -158,21 +159,14 @@ view attrs slots =
             transition-color duration-300
             """
         ]
-        [ Html.label
-            (List.concat
-                [ case config.id of
-                    Nothing ->
-                        []
-
-                    Just str ->
-                        [ Attrs.for str ]
-                , [ Attrs.class """
+        [ Utils.concatArgs Html.label
+            [ Maybe.Extra.mapToList Attrs.for config.id
+            , [ Attrs.class """
                 text-sm font-regular text-gray-700
                 md:flex justify-end [flex-basis:calc(50%-11rem)]
             """
-                  ]
-                ]
-            )
+              ]
+            ]
             [ slots_.label ]
         , div [ Attrs.class "h-1 md:h-0 md:w-8" ] []
         , div [ Attrs.class "w-72" ] [ slots_.form { id = config.id } ]

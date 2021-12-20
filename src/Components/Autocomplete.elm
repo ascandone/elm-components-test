@@ -174,27 +174,25 @@ view attrs_ { model, toMsg, options } =
     Html.map toMsg <|
         div [ Attrs.class "relative" ]
             [ div []
-                [ TextField.view
-                    (List.concat
-                        [ config.textFieldAttributes
-                        , if model.selected then
-                            [ TextField.actionIcon
-                                [ ActionButton.onClick ClearedSelection
-                                , ActionButton.size ActionButton.sm
-                                , ActionButton.variant ActionButton.filled
-                                ]
-                                FeatherIcons.x
+                [ Utils.concatArgs TextField.view
+                    [ config.textFieldAttributes
+                    , if model.selected then
+                        [ TextField.actionIcon
+                            [ ActionButton.onClick ClearedSelection
+                            , ActionButton.size ActionButton.sm
+                            , ActionButton.variant ActionButton.filled
                             ]
-
-                          else
-                            []
-                        , [ TextField.onFocus Focused
-                          , TextField.onBlur Blurred
-                          , TextField.onInput InternalInput
-                          , TextField.value model.value
-                          ]
+                            FeatherIcons.x
                         ]
-                    )
+
+                      else
+                        []
+                    , [ TextField.onFocus Focused
+                      , TextField.onBlur Blurred
+                      , TextField.onInput InternalInput
+                      , TextField.value model.value
+                      ]
+                    ]
                 ]
             , div [ Attrs.class "mt-3" ] []
             , Html.map Selected <|
