@@ -6,6 +6,7 @@ module Section.Radio exposing
     , update
     )
 
+import Components.Label as Label
 import Components.Radio as Radio
 import Html exposing (..)
 import Html.Attributes exposing (class)
@@ -49,11 +50,6 @@ update msg model =
             { model | value = Just opt }
 
 
-labelClass : Html.Attribute msg
-labelClass =
-    class "flex items-center gap-x-3 text-gray-800 select-none"
-
-
 view : Model -> List (Html Msg)
 view model =
     [ pre []
@@ -64,7 +60,7 @@ view model =
         ]
     , div [ class "space-y-3" ]
         [ label
-            [ labelClass
+            [ Label.class
             , Html.Attributes.for "option-1"
             , class "group"
             ]
@@ -76,7 +72,7 @@ view model =
                 ( "value-1", A )
             , text "First option"
             ]
-        , label [ labelClass, Html.Attributes.for "option-2", class "group" ]
+        , label [ Label.class, Html.Attributes.for "option-2", class "group" ]
             [ Radio.generic
                 [ Radio.onInput Input
                 , Radio.selectedValue model.value

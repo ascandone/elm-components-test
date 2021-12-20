@@ -7,6 +7,7 @@ module Section.Checkbox exposing
     )
 
 import Components.Checkbox as Checkbox
+import Components.Label as Label
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Section
@@ -46,14 +47,9 @@ update msg model =
             { model | check3 = b }
 
 
-labelClass : Attribute msg
-labelClass =
-    class "flex items-center gap-x-3 text-gray-800 select-none group"
-
-
 view : Model -> List (Html Msg)
 view model =
-    [ label [ labelClass, Html.Attributes.for "check-1" ]
+    [ label [ Label.class, Html.Attributes.for "check-1" ]
         [ Checkbox.view
             [ Checkbox.id "check-1"
             , Checkbox.onCheck Checked1
@@ -61,7 +57,7 @@ view model =
             ]
         , text "Indeterminate"
         ]
-    , label [ labelClass, Html.Attributes.for "check-2" ]
+    , label [ Label.class, Html.Attributes.for "check-2" ]
         [ Checkbox.view
             [ Checkbox.checked model.check2
             , Checkbox.onCheck Checked2
@@ -69,7 +65,7 @@ view model =
             ]
         , text "Unchecked"
         ]
-    , label [ labelClass, Html.Attributes.for "check-3" ]
+    , label [ Label.class, Html.Attributes.for "check-3" ]
         [ Checkbox.view
             [ Checkbox.id "check-3"
             , Checkbox.checked model.check3
