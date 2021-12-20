@@ -1,4 +1,4 @@
-module Utils exposing (getMakeConfig, kebabCase)
+module Utils exposing (concatArgs, getMakeConfig, kebabCase)
 
 
 getMakeConfig :
@@ -14,3 +14,8 @@ getMakeConfig args =
 kebabCase : String -> String
 kebabCase =
     String.replace " " "-" >> String.toLower
+
+
+concatArgs : (List a -> b) -> List (List a) -> b
+concatArgs f args =
+    f (List.concat args)
