@@ -86,7 +86,7 @@ viewInnerCircle checked =
         [ Attrs.class "bg-white rounded-full shadow-sm shadow-gray-500"
         , Attrs.class <|
             if checked then
-                "w-2 h-2"
+                "w-2 h-2 transition-all duration-200 ease-out"
 
             else
                 "w-0 h-0"
@@ -106,13 +106,16 @@ viewFakeRadio config value_ =
             w-5 h-5 rounded-full box-border shadow-sm
             flex items-center justify-center
             cursor-pointer hover:ring ring-teal-200
+            transition-color duration-100 ease-out
         """
           , Attrs.class <|
                 if checked then
                     "bg-teal-600"
 
                 else
-                    "border border-gray-300 hover:border-teal-500"
+                    """border border-gray-300 hover:border-teal-500
+                        __hover:bg-teal-200
+                    """
           ]
         ]
         [ viewInnerCircle checked
