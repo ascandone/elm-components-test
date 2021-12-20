@@ -89,7 +89,7 @@ viewChecked : Html msg
 viewChecked =
     div []
         [ FeatherIcons.check
-            |> FeatherIcons.withClass "text-teal-100"
+            |> FeatherIcons.withClass "text-white"
             |> viewIcon
         ]
 
