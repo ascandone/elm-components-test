@@ -48,7 +48,7 @@ update msg model =
 
 labelClass : Attribute msg
 labelClass =
-    class "flex items-center gap-x-3 text-gray-800 select-none"
+    class "flex items-center gap-x-3 text-gray-800 select-none group"
 
 
 view : Model -> List (Html Msg)

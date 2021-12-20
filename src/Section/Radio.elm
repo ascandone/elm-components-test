@@ -63,7 +63,11 @@ view model =
             |> text
         ]
     , div [ class "space-y-3" ]
-        [ label [ labelClass, Html.Attributes.for "option-1" ]
+        [ label
+            [ labelClass
+            , Html.Attributes.for "option-1"
+            , class "group"
+            ]
             [ Radio.generic
                 [ Radio.onInput Input
                 , Radio.selectedValue model.value
@@ -72,7 +76,7 @@ view model =
                 ( "value-1", A )
             , text "First option"
             ]
-        , label [ labelClass, Html.Attributes.for "option-2" ]
+        , label [ labelClass, Html.Attributes.for "option-2", class "group" ]
             [ Radio.generic
                 [ Radio.onInput Input
                 , Radio.selectedValue model.value

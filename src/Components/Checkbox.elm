@@ -124,7 +124,7 @@ viewButton config =
             [ Maybe.Extra.mapToList (\onCheck_ -> Html.Events.onClick (onCheck_ nextValue)) config.onCheck
             , [ Attrs.class """
                      rounded-md h-5 w-5 block shadow-sm box-border
-                     cursor-pointer hover:border-teal-400 hover:ring ring-teal-200
+                     cursor-pointer hover:border-teal-400 hover:ring group-hover:ring ring-teal-200
                      flex items-center justify-center
                      transition-color duration-200 ease-out
                      """

@@ -113,7 +113,7 @@ viewFakeRadio config ( _, value_ ) =
         , [ Attrs.class """
             w-5 h-5 rounded-full box-border shadow-sm
             flex items-center justify-center
-            cursor-pointer hover:ring ring-teal-200
+            cursor-pointer hover:ring group-hover:ring ring-teal-200
             transition-color duration-100 ease-out
         """
           , Attrs.class <|
@@ -121,9 +121,7 @@ viewFakeRadio config ( _, value_ ) =
                     "bg-teal-600"
 
                 else
-                    """border border-gray-300 hover:border-teal-500
-                        __hover:bg-teal-200
-                    """
+                    "border border-gray-300 hover:border-teal-500"
           ]
         ]
         [ viewInnerCircle checked
