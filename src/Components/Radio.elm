@@ -1,10 +1,11 @@
 module Components.Radio exposing
     ( Attribute
+    , generic
     , id
     , name
     , onInput
     , selectedValue
-    , view
+    , string
     )
 
 import Html exposing (..)
@@ -14,43 +15,43 @@ import Maybe.Extra
 import Utils
 
 
-type Attribute msg
-    = Attribute (Config msg -> Config msg)
+type Attribute msg value
+    = Attribute (Config msg value -> Config msg value)
 
 
-attribute : Html.Attribute msg -> Attribute msg
+attribute : Html.Attribute msg -> Attribute msg value
 attribute attr =
     Attribute <| \c -> { c | attributes = attr :: c.attributes }
 
 
-onInput : (String -> msg) -> Attribute msg
+onInput : (value -> msg) -> Attribute msg value
 onInput onInput_ =
     Attribute <| \c -> { c | onInput = Just onInput_ }
 
 
-selectedValue : Maybe String -> Attribute msg
+selectedValue : Maybe value -> Attribute msg value
 selectedValue value_ =
     Attribute <| \c -> { c | selectedValue = value_ }
 
 
-id : String -> Attribute msg
+id : String -> Attribute msg value
 id =
     attribute << Attrs.id
 
 
-name : String -> Attribute msg
+name : String -> Attribute msg value
 name =
     attribute << Attrs.name
 
 
-type alias Config msg =
+type alias Config msg value =
     { attributes : List (Html.Attribute msg)
-    , selectedValue : Maybe String
-    , onInput : Maybe (String -> msg)
+    , selectedValue : Maybe value
+    , onInput : Maybe (value -> msg)
     }
 
 
-defaultConfig : Config msg
+defaultConfig : Config msg value
 defaultConfig =
     { attributes = []
     , selectedValue = Nothing
@@ -58,7 +59,7 @@ defaultConfig =
     }
 
 
-makeConfig : List (Attribute msg) -> Config msg
+makeConfig : List (Attribute msg value) -> Config msg value
 makeConfig =
     Utils.getMakeConfig
         { unwrap = \(Attribute f) -> f
@@ -66,14 +67,18 @@ makeConfig =
         }
 
 
-viewRadio : Config msg -> String -> Html msg
-viewRadio config value_ =
+viewRadio : Config msg value -> ( String, value ) -> Html msg
+viewRadio config ( strValue_, value_ ) =
+    let
+        mapOnInput onInput_ =
+            Html.Events.onInput (\_ -> onInput_ value_)
+    in
     Utils.concatArgs input
         [ config.attributes
-        , Maybe.Extra.mapToList Html.Events.onInput config.onInput
+        , Maybe.Extra.mapToList mapOnInput config.onInput
         , [ Attrs.class "hidden"
           , Attrs.type_ "radio"
-          , Attrs.value value_
+          , Attrs.value strValue_
           , Attrs.checked (config.selectedValue == Just value_)
           ]
         ]
@@ -94,14 +99,17 @@ viewInnerCircle checked =
         []
 
 
-viewFakeRadio : Config msg -> String -> Html msg
-viewFakeRadio config value_ =
+viewFakeRadio : Config msg value -> ( String, value ) -> Html msg
+viewFakeRadio config ( _, value_ ) =
     let
         checked =
             config.selectedValue == Just value_
+
+        mapOnInput onInput_ =
+            Html.Events.onClick (onInput_ value_)
     in
     Utils.concatArgs button
-        [ Maybe.Extra.mapToList (\onInput_ -> Html.Events.onClick (onInput_ value_)) config.onInput
+        [ Maybe.Extra.mapToList mapOnInput config.onInput
         , [ Attrs.class """
             w-5 h-5 rounded-full box-border shadow-sm
             flex items-center justify-center
@@ -122,13 +130,18 @@ viewFakeRadio config value_ =
         ]
 
 
-view : List (Attribute msg) -> String -> Html msg
-view attrs value_ =
+generic : List (Attribute msg value) -> ( String, value ) -> Html msg
+generic attrs pair =
     let
         config =
             makeConfig attrs
     in
     div []
-        [ viewRadio config value_
-        , viewFakeRadio config value_
+        [ viewRadio config pair
+        , viewFakeRadio config pair
         ]
+
+
+string : List (Attribute msg String) -> String -> Html msg
+string attrs value_ =
+    generic attrs ( value_, value_ )

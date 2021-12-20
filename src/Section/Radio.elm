@@ -9,12 +9,26 @@ module Section.Radio exposing
 import Components.Radio as Radio
 import Html exposing (..)
 import Html.Attributes exposing (class)
-import Html.Events
 import Section
 
 
+type Option
+    = A
+    | B
+
+
+optionToString : Option -> String
+optionToString opt =
+    case opt of
+        A ->
+            "Option.A"
+
+        B ->
+            "Option.B"
+
+
 type alias Model =
-    { value : Maybe String
+    { value : Maybe Option
     }
 
 
@@ -25,14 +39,14 @@ init =
 
 
 type Msg
-    = Input String
+    = Input Option
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Input str ->
-            { model | value = Just str }
+        Input opt ->
+            { model | value = Just opt }
 
 
 labelClass : Html.Attribute msg
@@ -42,24 +56,29 @@ labelClass =
 
 view : Model -> List (Html Msg)
 view model =
-    [ pre [] [ text (Maybe.withDefault "(no option selected)" model.value) ]
+    [ pre []
+        [ model.value
+            |> Maybe.map optionToString
+            |> Maybe.withDefault "(no option selected)"
+            |> text
+        ]
     , div [ class "space-y-3" ]
         [ label [ labelClass, Html.Attributes.for "option-1" ]
-            [ Radio.view
+            [ Radio.generic
                 [ Radio.onInput Input
                 , Radio.selectedValue model.value
                 , Radio.id "option-1"
                 ]
-                "value-1"
+                ( "value-1", A )
             , text "First option"
             ]
         , label [ labelClass, Html.Attributes.for "option-2" ]
-            [ Radio.view
+            [ Radio.generic
                 [ Radio.onInput Input
                 , Radio.selectedValue model.value
                 , Radio.id "option-2"
                 ]
-                "value-2"
+                ( "value-2", B )
             , text "Second option"
             ]
         ]
