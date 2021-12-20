@@ -86,12 +86,33 @@ spacerVert =
     List.intersperse vSpacer
 
 
+viewFooter : Html msg
+viewFooter =
+    container
+        [ vSpacer
+        , hRow
+        , pre [ class "mt-10 mb-10" ]
+            [ text "Source code "
+            , a
+                [ class "text-blue-800 underline cursor-pointer font-semibold "
+                , Html.Attributes.href "https://github.com/ascandone/elm-components-test"
+                , Html.Attributes.target "_blank"
+                ]
+                [ text "on github" ]
+            ]
+        ]
+
+
 viewSections : List (Section msg) -> Html msg
 viewSections sections =
-    div [ class "max-w-screen-xl mx-auto py-5 pb-20" ]
-        (sections
-            |> List.map (\(Section h) -> h)
-            |> List.intersperse hRow
+    div [ class "max-w-screen-xl mx-auto py-5" ]
+        (List.append
+            (sections
+                |> List.map (\(Section h) -> h)
+                |> List.intersperse hRow
+            )
+            [ viewFooter
+            ]
         )
 
 
