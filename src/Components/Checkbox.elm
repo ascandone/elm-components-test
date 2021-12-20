@@ -121,37 +121,39 @@ viewButton config =
                 Nothing ->
                     True
     in
-    button
-        (List.concat
-            [ Maybe.Extra.mapToList (\onCheck_ -> Html.Events.onClick (onCheck_ nextValue)) config.onCheck
-            , [ Attrs.class """
-                                 rounded-md h-5 w-5 block shadow-sm box-border
-                                 cursor-pointer hover:border-teal-400 hover:ring ring-teal-200
-                                 flex items-center justify-center
-                                 transition-color duration-200 ease-out
-                                 """
-              , Attrs.class <|
-                    case config.checked of
-                        Just True ->
-                            "bg-teal-600"
+    div [ Attrs.class "active:scale-90 transition-all duration-100" ]
+        [ button
+            (List.concat
+                [ Maybe.Extra.mapToList (\onCheck_ -> Html.Events.onClick (onCheck_ nextValue)) config.onCheck
+                , [ Attrs.class """
+                     rounded-md h-5 w-5 block shadow-sm box-border
+                     cursor-pointer hover:border-teal-400 hover:ring ring-teal-200
+                     flex items-center justify-center
+                     transition-color duration-200 ease-out
+                     """
+                  , Attrs.class <|
+                        case config.checked of
+                            Just True ->
+                                "bg-teal-600"
 
-                        Just False ->
-                            "border border-gray-300"
+                            Just False ->
+                                "border border-gray-300"
 
-                        Nothing ->
-                            "border-[1.5px] border-teal-400 bg-teal-50"
-              ]
+                            Nothing ->
+                                "border-[1.5px] border-teal-400 bg-teal-50"
+                  ]
+                ]
+            )
+            [ case config.checked of
+                Nothing ->
+                    viewIndeterminate
+
+                Just True ->
+                    viewChecked
+
+                Just False ->
+                    text ""
             ]
-        )
-        [ case config.checked of
-            Nothing ->
-                viewIndeterminate
-
-            Just True ->
-                viewChecked
-
-            Just False ->
-                text ""
         ]
 
 
